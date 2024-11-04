@@ -61,7 +61,7 @@ def write_i8(f, value):
     if -128 <= value <= 127:
         f.write(struct.pack('<b', value))
     else:
-        print("Value error:{}".format(value))
+        print(f"Value error:{value}")
 
 
 def write_order(f, order):
