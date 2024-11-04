@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////-
 // Ce programme a été développé à CENTRALESUPELEC
 // Merci de conserver ce cartouche
-// Copyright  (c) 2024  CENTRALE-SUPELEC   
+// Copyright  (c) 2024  CENTRALE-SUPELEC
 // Département Electronique et électromagnétisme
 // //////////////////////////////////////////////////-
 //
 // fichier : serial_link.ino
-// auteur  : P.BENABES   
+// auteur  : P.BENABES
 // Copyright (c) 2024 CENTRALE-SUPELEC
 // Revision: 1.0  Date: 20/08/2024
 //
@@ -22,69 +22,79 @@
 #include <Servo.h>
 //#include "SR04.h"
 
-#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : -1))
+#define digitalPinToInterrupt(p) ((p) == 2 ? 0 : ((p) == 3 ? 1 : -1))
 
-char feedback ;   // si non nul indique que les commandes doivent renvoyer un acquittement
+char feedback;  // si non nul indique que les commandes doivent renvoyer un acquittement
 
 // gestion du multitache. définition de la période de chaque tache
-int del1 = 100;  // délai tache 1 de test d'arrivée
-int del2 = 500;  // délai regulation moteur
-int del3 = 100;   // démarrage progressif des moteurs
-int del4 = 100;  // tache de détection des obstacles
-int del5 = 200;  // tache de détection des obstacles
-int tim1,tim2,tim3,tim4,tim5 ;   // temps du prochain evenement
-bool task1on=false ;        // lancement de la tache 1 de test d'arrivée
-bool task2on=true ;         // lancement de la tache 2 de calcul de vitesse
-bool task3on=false ;        // lancement de la tache 3 d'accélération progressive
-bool task4on=false ;        // lancement de la tache 4 de détection de collision par IR
-bool task5on=false ;        // lancement de la tache 5 de rotation du servomoteur
-bool obst=false ;           // obstacle détecté
+int delay1 = 100;                    // délai tache 1 de test d'arrivée
+int delay2 = 500;                    // délai regulation moteur
+int delay3 = 100;                    // démarrage progressif des moteurs
+int delay4 = 100;                    // tache de détection des obstacleDetectedacles
+int delay5 = 200;                    // tache de détection des obstacleDetectedacles
+int time1, time2, time3, time4, time5;  // temps du prochain evenement
+bool customTaskOn = false;              // lancement de la tache 1 de test d'arrivée
+bool motorSpeedCalculationOn = true;               // lancement de la tache 2 de calcul de vitesse
+bool progressiveAccelerationOn = false;              // lancement de la tache 3 d'accélération progressive
+bool collisionDetectionOn = false;              // lancement de la tache 4 de détection de collision par IR
+bool servoRotationOn = false;              // lancement de la tache 5 de rotation du servomoteur
+bool obstacleDetected = false;                 // obstacleDetectedacle détecté
 
-char c,CharIn,m;
-bool ConnOn ;          // indique si la carte est connectée
-int commode=0 ;        // indique le mode de communication 0=tout en ASCII, 1 les commandes sont en binaire et les retours en ascii, 2 tout est en binaire  
-char retstring[96] ;   // chaine de retour de commande
+char c, CharIn, m;
+bool cardConnected;         // indique si la carte est connectée
+int communicationMode = 0;     // indique le mode de communication 0=tout en ASCII, 1 les commandes sont en binaire et les retours en ascii, 2 tout est en binaire
+char retstring[96];  // chaine de retour de commande
 
-// variables de la gestion des moteurs 
-long int volatile CountIncr1,CountIncr2 =0 ;  // valeur des compteurs incrémentaux en 32 bits
-int nivM1,nivM2 ;         // tension appliquée au moteur
-int nivE1,nivE2 ;         // tension de consigne à atteindre pour le démarrage en douceur
-int nivM ;                // pointeur sur ces variables
-char motA,motB ;          // pointeur sur les moteurs
-int vitdem=10 ;              // vitesse de démarrage des moteurs
+// variables de la gestion des moteurs
+long int volatile CountIncr1, CountIncr2 = 0;  // valeur des compteurs incrémentaux en 32 bits
+int m1Voltage, m2Voltage;                              // tension appliquée au moteur
+int echelon1Voltage, echelon2Voltage;                              // tension de consigne à atteindre pour le démarrage en douceur
+int mVoltage;                                      // pointeur sur ces variables
+char motA, motB;                               // pointeur sur les moteurs
+int startSpeed = 10;                               // vitesse de démarrage des moteurs
 
 // variables pour le calcul de la vitesse
-long int v1,lv1 ;
-long int v2,lv2 ;
-long int v3,lv3 ;
-int vitesse1,vitesse2 ;
+long int v1, lv1;
+long int v2, lv2;
+long int v3, lv3;
+int vitesse1, vitesse2;
 
 //SR04 sr04 = SR04(ECHO_PIN,TRIG_PIN);  // gestion du capteur ultrasonore
 long a;
 int v;
 
 // gestion du servomoteur
-Servo frontServo ;    // create servo objects
-int servopos= 0 ;    // commande de position du servomoteur
-int servomin=30 ;     // position min du servomoteur
-int servomax=150 ;
-int servospeed=10 ;   // vitesse de rotation du servomoteur
-int servosens=1 ;      // sens de rotation du servomoteur
+Servo frontServo;   // create servo objects
+int servoPosition = 0;   // commande de position du servomoteur
+int servoMin = 30;  // position min du servomoteur
+int servoMax = 150;
+int servoSpeed = 10;  // vitesse de rotation du servomoteur
+int servoDirection = 1;    // sens de rotation du servomoteur
 
 
 ///////////////////////////////////////////////////////////////////////////
 //   mise en route des taches périodiques
 /////////////////////////////////////////////////////////////////////////
-inline void Task1On()
-{ task1on=true;  tim1 = (int)millis()+del1; }
-inline void Task2On()
-{ task2on=true;  tim2 = (int)millis()+del2; }
-inline void Task3On()
-{ task3on=true;  tim3 = (int)millis()+del3; }
-inline void Task4On()
-{ task4on=true;  tim4 = (int)millis()+del4; }
-inline void Task5On()
-{ task5on=true;  tim5 = (int)millis()+del5; }
+inline void customTaskOn() {
+  customTaskOn = true;
+  time1 = (int)millis() + delay1;
+}
+inline void motorSpeedCalculationOn() {
+  motorSpeedCalculationOn = true;
+  time2 = (int)millis() + delay2;
+}
+inline void progressiveAccelerationOn() {
+  progressiveAccelerationOn = true;
+  time3 = (int)millis() + delay3;
+}
+inline void collisionDetectionOn() {
+  collisionDetectionOn = true;
+  time4 = (int)millis() + delay4;
+}
+inline void servoRotationOn() {
+  servoRotationOn = true;
+  time5 = (int)millis() + delay5;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -92,47 +102,50 @@ inline void Task5On()
 //
 /////////////////////////////////////////////////////////////////////////
 
-void dummy() {  Serial.println("ER"); }
+void dummy() {
+  Serial.println("ER");
+}
 
 void init_arduino() {
 
-// on eteint les moteurs
-  nivM1=0 ; nivM2=0 ;     
-  set_motor1(nivM1) ;
-  set_motor2(nivM2) ;
-  
-  servomin=30 ;     // position min du servomoteur
-  servomax=150 ;
-  servopos=(servomin+servomax)/2 ;
-  frontServo.write(servopos);
-  task5on=false ;
-  obst=false ;
+  // on eteint les moteurs
+  m1Voltage = 0;
+  m2Voltage = 0;
+  set_motor1(m1Voltage);
+  set_motor2(m2Voltage);
 
-  task1on=false ;       
-  Task2On() ;    
-  task3on=false ;       
-  task4on=false ;     
-  task5on=false ;     
+  servoMin = 30;  // position min du servomoteur
+  servoMax = 150;
+  servoPosition = (servoMin + servoMax) / 2;
+  frontServo.write(servoPosition);
+  servoRotationOn = false;
+  obstacleDetected = false;
+
+  customTaskOn = false;
+  motorSpeedCalculationOn();
+  progressiveAccelerationOn = false;
+  collisionDetectionOn = false;
+  servoRotationOn = false;
 }
 
 void setup() {
-  Serial.begin(SERIAL_BAUD); // vitesse de la liaison série
-  Serial.setTimeout(SERIAL_TIMEOUT); // timeout pour attendre une fin de message
+  Serial.begin(SERIAL_BAUD);          // vitesse de la liaison série
+  Serial.setTimeout(SERIAL_TIMEOUT);  // timeout pour attendre une fin de message
   pinMode(motor1PWM, OUTPUT);
   pinMode(motor1SNS, OUTPUT);
   pinMode(motor2PWM, OUTPUT);
   pinMode(motor2SNS, OUTPUT);
-  tim1 = (int)millis()+del1;
-  tim2 = (int)millis()+del2;
-  tim3 = (int)millis()+del3;
-  tim4 = (int)millis()+del4;
-  tim5 = (int)millis()+del5;
+  time1 = (int)millis() + delay1;
+  time2 = (int)millis() + delay2;
+  time3 = (int)millis() + delay3;
+  time4 = (int)millis() + delay4;
+  time5 = (int)millis() + delay5;
   frontServo.attach(ServofrontPin);
 
-  init_arduino() ;
+  init_arduino();
 
-  attachInterrupt(digitalPinToInterrupt(ENCODER1B), IntIncrem1, FALLING); // attache l'interruption à l'encodeur 1
-  attachInterrupt(digitalPinToInterrupt(ENCODER2B), IntIncrem2, FALLING); // attache l'interruption à l'encodeur 2
+  attachInterrupt(digitalPinToInterrupt(ENCODER1B), IntIncrem1, FALLING);  // attache l'interruption à l'encodeur 1
+  attachInterrupt(digitalPinToInterrupt(ENCODER2B), IntIncrem2, FALLING);  // attache l'interruption à l'encodeur 2
 }
 
 ////////////////////////////////////////////////////////////
@@ -143,20 +156,20 @@ void setup() {
 
 
 void loop() {
- 
-  if (Serial.available() > 0) {
+
+  if (Serial.available()) {
     // on lit le premier caractère qui arrive
     CharIn = Serial.read();
-    if (CharIn=='A') CONNECT_code();        // demande de connection
-    else if (ConnOn)     decod_serial(CharIn);  // on ne fait un decodage de commande que si on est connecté
+    if (CharIn == 'A') CONNECT_code();      // demande de connection
+    else if (cardConnected) decod_serial(CharIn);  // on ne fait un decodage de commande que si on est connecté
   }
 
   // lancement des differentes taches périodiques
-  if (task1on) task1() ;   // tache periodique non définie
-  if (task2on) task2() ;      // tache de calcul de la vitesse moteur toujours en route
-  if (task3on) task3() ;      // tache d'accélération progressive des moteurs
-  if (task4on) task4() ;      // tache de détection de collision
-  if (task5on) task5() ;      // tache de détection de collision
+  if (customTaskOn) customTask();  // tache periodique non définie
+  if (motorSpeedCalculationOn) motorSpeedCalculation();  // tache de calcul de la vitesse moteur toujours en route
+  if (progressiveAccelerationOn) progressiveAcceleration();  // tache d'accélération progressive des moteurs
+  if (collisionDetectionOn) collisionDetection();  // tache de détection de collision
+  if (servoRotationOn) servoRotation();  // tache de détection de collision
 }
 
 
@@ -168,80 +181,87 @@ void loop() {
 //////////////////////////////////////////////////////////////////////////
 
 // Routine de recuperation d'un caractere
-char GetChar(char def)
-{   
-    if (Serial.available()>0)  // liaison série vide 
-      return(Serial.read());
-    else
-      return(def) ;
+char GetChar(char def) {
+  if (Serial.available() > 0)  // liaison série vide
+    return (Serial.read());
+  else
+    return (def);
 }
 
 // routine de récupération d'un nombre entier sur la liaison série
-// le codage sera ascii ou binaire selon la variable 'commode'
-int GetInt(int def)
-{   
-    int tmp ;
-    if (commode==0) {
-      c=Serial.peek() ;
-      if (c==' ') {Serial.read(); c=Serial.peek() ;}
-      if ((c=='-') || ((c>='0') && (c<='9'))) 
-        return(Serial.parseInt()); // on recupere la commande du moteur
-      else
-        return(def) ; }  // renvoie la valeur par défaut 
-    else {
-      Serial.readBytes((char*)&tmp,2);
-      return(tmp) ;
+// le codage sera ascii ou binaire selon la variable 'communicationMode'
+int GetInt(int def) {
+  int tmp;
+  if (communicationMode == 0) {
+    c = Serial.peek();
+    if (c == ' ') {
+      Serial.read();
+      c = Serial.peek();
     }
-    
+    if ((c == '-') || ((c >= '0') && (c <= '9')))
+      return (Serial.parseInt());  // on recupere la commande du moteur
+    else
+      return (def);
+  }  // renvoie la valeur par défaut
+  else {
+    Serial.readBytes((char*)&tmp, 2);
+    return (tmp);
+  }
 }
 
 // routine de récupération d'un nombre entier long (32 bits) sur la liaison série
-// le codage sera ascii ou binaire selon la variable 'commode'
-long int GetLong(long def)
-{
-    long int tmp ;
-    if (commode==0) {
-      c=Serial.peek() ;
-      if (c==' ') {Serial.read(); c=Serial.peek() ;}
-      if ((c=='-') || ((c>='0') && (c<='9'))) 
-      {
-        tmp=Serial.parseInt() ;
-        return(tmp); // on recupere la commande du moteur
-      }
-      else
-        return(def) ; }  // renvoie la valeur par défaut
-    else {
-      Serial.readBytes((char*)&tmp,4);
-      return(tmp) ;
+// le codage sera ascii ou binaire selon la variable 'communicationMode'
+long int GetLong(long def) {
+  long int tmp;
+  if (communicationMode == 0) {
+    c = Serial.peek();
+    if (c == ' ') {
+      Serial.read();
+      c = Serial.peek();
     }
+    if ((c == '-') || ((c >= '0') && (c <= '9'))) {
+      tmp = Serial.parseInt();
+      return (tmp);  // on recupere la commande du moteur
+    } else
+      return (def);
+  }  // renvoie la valeur par défaut
+  else {
+    Serial.readBytes((char*)&tmp, 4);
+    return (tmp);
+  }
 }
 
 // bibliothèque de renvoi de valeurs binaires sur la liaison série
-inline void write_i8(char num)
-{ Serial.write(num); }
+inline void write_i8(char num) {
+  Serial.write(num);
+}
 
-void write_i16(int num)
-{ Serial.write((uint8_t*)&num, 2); }
+void write_i16(int num) {
+  Serial.write((uint8_t*)&num, 2);
+}
 
-void write_i32(long num)
-{ Serial.write((uint8_t*)&num, 4); }
+void write_i32(long num) {
+  Serial.write((uint8_t*)&num, 4);
+}
 
 /////////////////////////////////////////////////
-//  LES FONCTIONS MOTEUR 
+//  LES FONCTIONS MOTEUR
 ////////////////////////////////////////////////
 
 // code de mise en route de moteur
-inline void set_motor(char MPWM, char MSNS, char sns, int nivm)
-{ if (obst==true) nivm=0 ; // si on n'a pas d'obstcle
-    analogWrite(MPWM,abs(nivm));
-    digitalWrite(MSNS,sns?(nivm>=0?0:1):(nivm>=0?1:0)) ;
+inline void set_motor(char MPWM, char MSNS, char sns, int nivm) {
+  if (obstacleDetected == true) nivm = 0;  // si on n'a pas d'obstacleDetectedcle
+  analogWrite(MPWM, abs(nivm));
+  digitalWrite(MSNS, sns ? (nivm >= 0 ? 0 : 1) : (nivm >= 0 ? 1 : 0));
 }
 
-inline void set_motor1(int nivm)
-{  set_motor(motor1PWM,motor1SNS,0,nivm) ; }
-  
-inline void set_motor2(int nivm)  
-{  set_motor(motor2PWM,motor2SNS,1,nivm) ; }
+inline void set_motor1(int nivm) {
+  set_motor(motor1PWM, motor1SNS, 0, nivm);
+}
+
+inline void set_motor2(int nivm) {
+  set_motor(motor2PWM, motor2SNS, 1, nivm);
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -252,185 +272,192 @@ inline void set_motor2(int nivm)
 
 
 // routine renvoyant le message d'acquitement simple (OK ou OBstacle)
-inline void RetAcquitSimpl()
-{
-    if (feedback==1) 
-      if (obst==false) Serial.println("OK"); 
-      else Serial.println("OB");
+inline void RetAcquitSimpl() {
+  if (feedback == 1)
+    if (obstacleDetected == false) Serial.println("OK");
+    else Serial.println("OB");
 }
 
 
 // code de connection de la carte
 void CONNECT_code() {
-  delay(1); // indispensable et pas trop long sinon le caractère suivant n'est pas arrivé
-  c=GetChar(0);
-  feedback=c-'0' ;
-  ConnOn = true ;
-  commode= GetChar(0);
-  if (commode>0) commode-='0'; else commode=0 ;
-  init_arduino() ;
+  delay(1);  // indispensable et pas trop long sinon le caractère suivant n'est pas arrivé
+  c = GetChar(0);
+  feedback = c - '0';
+  cardConnected = true;
+  communicationMode = GetChar(0);
+  if (communicationMode > 0) communicationMode -= '0';
+  else communicationMode = 0;
+  init_arduino();
 
   RetAcquitSimpl();
-  if (feedback==2)
-  {
-    sprintf(retstring,"OK Arduino connecte version 1.0 en mode %d",commode);
-    Serial.println(retstring); 
-  }  
-
+  if (feedback == 2) {
+    sprintf(retstring, "OK Arduino connecte version 1.0 en mode %d", communicationMode);
+    Serial.println(retstring);
+  }
 }
 
 // code de deconnection de la carte
 void DISCONNECT_code() {
   init_arduino();
   Serial.println("OK Arduino deconnecte");
-  ConnOn = false ;
+  cardConnected = false;
 }
 
 
 // code de remise à 0 des encodeurs
 void RESETENC_code() {
-    GetLong(0);
-    GetLong(0);
-    CountIncr1=0 ;
-    CountIncr2=0;
-    RetAcquitSimpl();     // acquitement de la commande en mode feedback=1
-    if (feedback==2)
-        Serial.println("Ok encodeurs de position remis à 0"); 
+  GetLong(0);
+  GetLong(0);
+  CountIncr1 = 0;
+  CountIncr2 = 0;
+  RetAcquitSimpl();  // acquitement de la commande en mode feedback=1
+  if (feedback == 2)
+    Serial.println("Ok encodeurs de position remis à 0");
 }
 
 // code pour commander 1 moteur
 void SINGLEMOTOR_code() {
-  char s ;
-  delay(1); // indispensable et pas trop long
-  m=GetChar(0);
-  if (m=='1') { nivM=nivM1 ; motA=motor1PWM; s=0; motB=motor1SNS; }
-  else if (m=='2') { nivM=nivM2 ; motA=motor2PWM; s=1; motB=motor2SNS; }
-  if ((m=='1') || (m=='2'))
-  { nivM=GetInt(0) ;              // recupere la valeur de la commande
-    GetInt(0) ;
-    GetLong(0);
-    set_motor(motA,motB,s,nivM) ;  // envoie la commande au moteur
-    RetAcquitSimpl();     // acquitement de la commande en mode feedback=1
-    if (feedback==2)
-      if (obst==false)
-      {
-        sprintf(retstring,"OK Moteur %c mis à la tension : %d",m,nivM);
-        Serial.println(retstring); }
-      else 
-        Serial.println("OB stacle détecté moteur non allumé"); 
+  char s;
+  delay(1);  // indispensable et pas trop long
+  m = GetChar(0);
+  if (m == '1') {
+    mVoltage = m1Voltage;
+    motA = motor1PWM;
+    s = 0;
+    motB = motor1SNS;
+  } else if (m == '2') {
+    mVoltage = m2Voltage;
+    motA = motor2PWM;
+    s = 1;
+    motB = motor2SNS;
   }
-  else
-  { Serial.readString() ;
-    Serial.println("Erreur commande incomplète"); 
-  
+  if ((m == '1') || (m == '2')) {
+    mVoltage = GetInt(0);  // recupere la valeur de la commande
+    GetInt(0);
+    GetLong(0);
+    set_motor(motA, motB, s, mVoltage);  // envoie la commande au moteur
+    RetAcquitSimpl();                // acquitement de la commande en mode feedback=1
+    if (feedback == 2)
+      if (obstacleDetected == false) {
+        sprintf(retstring, "OK Moteur %c mis à la tension : %d", m, mVoltage);
+        Serial.println(retstring);
+      } else
+        Serial.println("OB stacle détecté moteur non allumé");
+  } else {
+    Serial.readString();
+    Serial.println("Erreur commande incomplète");
   }
 }
 
- 
+
 // code pour commander les 2 moteurs en même temps
 void DUALMOTOR_code() {
-  delay(1); // indispensable et pas trop long
+  delay(1);  // indispensable et pas trop long
 
   // on recupere les parametres
-  nivM1=GetInt(0) ;   // on lit la valeur du premier moteur
-  nivM2=GetInt(nivM1) ; // on lit la valeur du deuxième moteur
+  m1Voltage = GetInt(0);      // on lit la valeur du premier moteur
+  m2Voltage = GetInt(m1Voltage);  // on lit la valeur du deuxième moteur
   GetLong(0);
 
   // on envoie la commande aux 2 moteurs
-  set_motor1(nivM1) ;
-  set_motor2(nivM2) ;
-  if ((nivM1==1) && (nivM2==0)) task3on=false ;
+  set_motor1(m1Voltage);
+  set_motor2(m2Voltage);
+  if ((m1Voltage == 1) && (m2Voltage == 0)) progressiveAccelerationOn = false;
 
   //reponse de la commande
   RetAcquitSimpl();
-  if (feedback==2)
-    if (obst==false)
-    { 
-      sprintf(retstring,"OK Moteurs mis aux tensions : %d %d",nivM1,nivM2);
-      Serial.println(retstring); }
-    else 
-      Serial.println("OB stacle détecté moteur non allumé"); 
+  if (feedback == 2)
+    if (obstacleDetected == false) {
+      sprintf(retstring, "OK Moteurs mis aux tensions : %d %d", m1Voltage, m2Voltage);
+      Serial.println(retstring);
+    } else
+      Serial.println("OB stacle détecté moteur non allumé");
 }
 
 
 // code pour la mise en route progressive des 2 moteurs en même temps
 void DUALMOTORSLOW_code() {
-  delay(1); // indispensable et pas trop long
+  delay(1);  // indispensable et pas trop long
 
   // on recupere les parametres
-  nivE1=GetInt(0) ;   // on lit la valeur du premier moteur ;
-  nivE2=GetInt(nivE1) ;   // on lit la valeur du deuxième moteur ;
-  vitdem=GetInt(25) ;     // on lit la vitesse 
+  echelon1Voltage = GetInt(0);      // on lit la valeur du premier moteur ;
+  echelon2Voltage = GetInt(echelon1Voltage);  // on lit la valeur du deuxième moteur ;
+  startSpeed = GetInt(25);    // on lit la vitesse
   GetInt(0);
-  
+
   // on lance la tache d'accélération
-  if (obst==false) 
-    Task3On();
+  if (obstacleDetected == false)
+    progressiveAccelerationOn();
 
   // réponse de la commande
   RetAcquitSimpl();
-  if (feedback==2)
-    if (obst==false)
-    { 
-      sprintf(retstring,"OK Moteurs démarrage progressif : %d %d %d",nivE1,nivE2,vitdem);
-      Serial.println(retstring); }
-    else 
-      Serial.println("OB stacle détecté moteur non allumé"); 
+  if (feedback == 2)
+    if (obstacleDetected == false) {
+      sprintf(retstring, "OK Moteurs démarrage progressif : %d %d %d", echelon1Voltage, echelon2Voltage, startSpeed);
+      Serial.println(retstring);
+    } else
+      Serial.println("OB stacle détecté moteur non allumé");
 }
 
 
 // code pour régler la consigne de vitesse pour envoyer les 2 moteurs à une certaine position
 void SERVO_code() {
-  delay(1); // indispensable et pas trop long
-  
-  // onn recupere les paramètres 
-  servopos=GetInt(0) ;  // on recupere la vitesse pour positionner le moteur
+  delay(1);  // indispensable et pas trop long
+
+  // onn recupere les paramètres
+  servoPosition = GetInt(0);  // on recupere la vitesse pour positionner le moteur
   GetInt(0);
   GetLong(0);
-  if (servopos<servomin) servopos=servomin ;
-  if (servopos>servomax) servopos=servomax ;
-  
-  frontServo.write(servopos);
-   
+  if (servoPosition < servoMin) servoPosition = servoMin;
+  if (servoPosition > servoMax) servoPosition = servoMax;
+
+  frontServo.write(servoPosition);
+
   // on renvoie la réponse
   RetAcquitSimpl();
-  if (feedback==2)
-    {  
-       sprintf(retstring,"OK servomoteur en %d",servopos);
-       Serial.println(retstring); }
+  if (feedback == 2) {
+    sprintf(retstring, "OK servomoteur en %d", servoPosition);
+    Serial.println(retstring);
+  }
 }
 
 // code pour régler la consigne min et max des servomoteurs
 void SERVO_minmax() {
-  delay(1); // indispensable et pas trop long
-  
-  // onn recupere les paramètres 
-  servomin=GetInt(0) ;  // on recupere la vitesse pour positionner le moteur
-  servomax=GetInt(0);
+  delay(1);  // indispensable et pas trop long
+
+  // onn recupere les paramètres
+  servoMin = GetInt(0);  // on recupere la vitesse pour positionner le moteur
+  servoMax = GetInt(0);
   GetLong(0);
-  if (servomin<0) servomin=0 ;
-  if (servomax>270) servomax=270 ;
-  
+  if (servoMin < 0) servoMin = 0;
+  if (servoMax > 270) servoMax = 270;
+
   // on renvoie la réponse
   RetAcquitSimpl();
-  if (feedback==2)
-    {  
-       sprintf(retstring,"servomoteur min max = %d %d",servomin, servomax);
-       Serial.println(retstring); }
+  if (feedback == 2) {
+    sprintf(retstring, "servomoteur min max = %d %d", servoMin, servoMax);
+    Serial.println(retstring);
+  }
 }
 
 
 // code de mise en route de la protection moteur
-// chaque appel à cette commande réinitialise la détection et autorise le redémarrage des moteurs 
+// chaque appel à cette commande réinitialise la détection et autorise le redémarrage des moteurs
 void PROTECT_IR_code() {
-  delay(1); // indispensable et pas trop long
-  m=GetChar(0);
-  if (m=='0')   { task4on=false ; obst=false ;   }
-  else if (m=='1')  { Task4On() ;  obst=false ; }    
-  if (feedback==1) Serial.println("OK");
-  if (feedback==2)
-  {  Serial.print("OK protection moteur : ");
-      Serial.println(task4on);
+  delay(1);  // indispensable et pas trop long
+  m = GetChar(0);
+  if (m == '0') {
+    collisionDetectionOn = false;
+    obstacleDetected = false;
+  } else if (m == '1') {
+    collisionDetectionOn();
+    obstacleDetected = false;
+  }
+  if (feedback == 1) Serial.println("OK");
+  if (feedback == 2) {
+    Serial.print("OK protection moteur : ");
+    Serial.println(collisionDetectionOn);
   }
 }
 
@@ -442,76 +469,89 @@ void PROTECT_IR_code() {
 ///////////////////////////////////////////////////////////////////////////////
 
 // renvoie la position de 2 encodeurs
-void  ENCODER_DUAL_code() {
-  v1=CountIncr1; v2=CountIncr2 ;
-  if (commode==2)
-  {  write_i32(v1); write_i32(v2); }
-  else
-  {
+void ENCODER_DUAL_code() {
+  v1 = CountIncr1;
+  v2 = CountIncr2;
+  if (communicationMode == 2) {
+    write_i32(v1);
+    write_i32(v2);
+  } else {
     Serial.print(v1);
     Serial.print(" ");
-    Serial.println(v2); }
+    Serial.println(v2);
+  }
 }
 
 
 // renvoie le temps courant et la position d'un encodeur
-void  ENCODERS_TIME_code() {
-  delay(1); // indispensable et pas trop long sinon le caractère suivant n'est pas arrivé
-  c=GetChar(0);
-  if (c=='1') 
-    v2=CountIncr1; 
-  else if (c=='2')
-    v2=CountIncr2 ;
+void ENCODERS_TIME_code() {
+  delay(1);  // indispensable et pas trop long sinon le caractère suivant n'est pas arrivé
+  c = GetChar(0);
+  if (c == '1')
+    v2 = CountIncr1;
+  else if (c == '2')
+    v2 = CountIncr2;
 
-  v1=millis() ;
-  if (commode==2)
-  {  write_i32(v1); write_i32(v2); }
-  else
-  { Serial.print(v1);
+  v1 = millis();
+  if (communicationMode == 2) {
+    write_i32(v1);
+    write_i32(v2);
+  } else {
+    Serial.print(v1);
     Serial.print(" ");
-    Serial.print(v2);  }
+    Serial.print(v2);
+  }
 }
 
 // renvoie la vitesse des 2 moteurs
 void SPEED_DUAL_code() {
-  if (commode==2)
-  {  write_i16(vitesse1); write_i16(vitesse2); write_i16(0);  write_i16(0); }
-  else
-  { Serial.print(vitesse1);
+  if (communicationMode == 2) {
+    write_i16(vitesse1);
+    write_i16(vitesse2);
+    write_i16(0);
+    write_i16(0);
+  } else {
+    Serial.print(vitesse1);
     Serial.print(" ");
-    Serial.println(vitesse2); }
+    Serial.println(vitesse2);
+  }
 }
 
 // renvoie le temps courant et la valeur du capteur infrarouge
-void  INFRARED_TIME_code() {
-  v1=millis() ;
-  if (commode==2)
-  {  write_i32(v1); write_i16(analogRead(IR_pin));  write_i16(0);   }
-  else
-  { 
+void INFRARED_TIME_code() {
+  v1 = millis();
+  if (communicationMode == 2) {
+    write_i32(v1);
+    write_i16(analogRead(IR_pin));
+    write_i16(0);
+  } else {
     Serial.print(v1);
     Serial.print(" ");
-    Serial.println(analogRead(IR_pin)); }
+    Serial.println(analogRead(IR_pin));
+  }
 }
 
 // renvoie la valeur du capteur ultrasons
-void  ULTRASON_code() {
-//  a=sr04.Distance();
-//  if (commode==2)
-//    write_i16(a); 
-//  else
-//    Serial.println(a);
+void ULTRASON_code() {
+  //  a=sr04.Distance();
+  //  if (communicationMode==2)
+  //    write_i16(a);
+  //  else
+  //    Serial.println(a);
 }
 
 // renvoie la tension sur le moteur
-void  VALMOTOR_code() {
-  if (commode==2)
-  { write_i16(nivM1); 
-    write_i16(nivM2);  write_i16(0);  write_i16(0);}
-  else
-  { Serial.print(nivM1);
+void VALMOTOR_code() {
+  if (communicationMode == 2) {
+    write_i16(m1Voltage);
+    write_i16(m2Voltage);
+    write_i16(0);
+    write_i16(0);
+  } else {
+    Serial.print(m1Voltage);
     Serial.print(" ");
-    Serial.println(nivM2); }
+    Serial.println(m2Voltage);
+  }
 }
 
 /////////////////////////////////////////////////////
@@ -519,50 +559,51 @@ void  VALMOTOR_code() {
 /////////////////////////////////////////////////////
 
 
-void (*UpperFn[20])() = {           // tableau des fonctions pour un code en majuscule
-  CONNECT_code,             // A
-  RESETENC_code,            // B
-  DUALMOTOR_code,           // C
-  DUALMOTORSLOW_code,       // D
-  dummy,                    // E
-  dummy,                    // F
-  SERVO_code,               // G
-  dummy,                    // H
-  PROTECT_IR_code,dummy,dummy,dummy,dummy, // I,J,K,L,M
-  ENCODER_DUAL_code,        // N
-  ENCODERS_TIME_code,       // O  
-  SPEED_DUAL_code,dummy,    // P,Q
-  INFRARED_TIME_code,       // R
-  ULTRASON_code,            // S
-  VALMOTOR_code             // T
-  };
+void (*UpperFn[20])() = {
+  // tableau des fonctions pour un code en majuscule
+  CONNECT_code,                                 // A
+  RESETENC_code,                                // B
+  DUALMOTOR_code,                               // C
+  DUALMOTORSLOW_code,                           // D
+  dummy,                                        // E
+  dummy,                                        // F
+  SERVO_code,                                   // G
+  dummy,                                        // H
+  PROTECT_IR_code, dummy, dummy, dummy, dummy,  // I,J,K,L,M
+  ENCODER_DUAL_code,                            // N
+  ENCODERS_TIME_code,                           // O
+  SPEED_DUAL_code, dummy,                       // P,Q
+  INFRARED_TIME_code,                           // R
+  ULTRASON_code,                                // S
+  VALMOTOR_code                                 // T
+};
 
-void (*LowerFn[20])() = {             // tableau des fonctions pour un code en minuscule
-  DISCONNECT_code,          // a
-  RESETENC_code,            // b
-  SINGLEMOTOR_code,         // c
-  DUALMOTORSLOW_code,       // d
-  dummy,                    // e
-  dummy,SERVO_minmax,dummy, // f,g,h
-  PROTECT_IR_code,dummy,dummy,dummy,dummy, // i,J,K,L,M
-  ENCODER_DUAL_code,        // n
-  ENCODERS_TIME_code,       // o  
-  SPEED_DUAL_code,dummy,    // p,q
-  INFRARED_TIME_code,       // r
-  ULTRASON_code,            // S
-  VALMOTOR_code             // T
-  };
+void (*LowerFn[20])() = {
+  // tableau des fonctions pour un code en minuscule
+  DISCONNECT_code,                              // a
+  RESETENC_code,                                // b
+  SINGLEMOTOR_code,                             // c
+  DUALMOTORSLOW_code,                           // d
+  dummy,                                        // e
+  dummy, SERVO_minmax, dummy,                   // f,g,h
+  PROTECT_IR_code, dummy, dummy, dummy, dummy,  // i,J,K,L,M
+  ENCODER_DUAL_code,                            // n
+  ENCODERS_TIME_code,                           // o
+  SPEED_DUAL_code, dummy,                       // p,q
+  INFRARED_TIME_code,                           // r
+  ULTRASON_code,                                // S
+  VALMOTOR_code                                 // T
+};
 
 
-// fonction de décodage des messages 
-inline void decod_serial(char CharIn)
-{
-    if ((CharIn>='A') && (CharIn<='T'))       // pour les fonctions 'majuscule'
-      UpperFn[CharIn-'A']() ;
-    else if ((CharIn>='a') && (CharIn<='t'))  // pour les fonctions 'miniscule'
-      LowerFn[CharIn-'a']() ;
-    else
-      dummy();
+// fonction de décodage des messages
+inline void decod_serial(char CharIn) {
+  if ((CharIn >= 'A') && (CharIn <= 'T'))  // pour les fonctions 'majuscule'
+    UpperFn[CharIn - 'A']();
+  else if ((CharIn >= 'a') && (CharIn <= 't'))  // pour les fonctions 'miniscule'
+    LowerFn[CharIn - 'a']();
+  else
+    dummy();
 }
 
 
@@ -574,83 +615,88 @@ inline void decod_serial(char CharIn)
 
 
 // tache libre
-inline void task1() {
-  if (((int)millis()-tim1)>0)  // si on a atteint le temps programmé
-  { 
-
-  // A COMPLETER
-
-    
-  tim1=tim1+del1 ;
-  }
-}
-
-// tache de calcul de la vitesse du moteur
-inline void task2() {
-  if (((int)millis()-tim2)>0)  // si il s'est passé 1 seconde depuis la dernière lecture
+inline void customTask() {
+  if (((int)millis() - time1) > 0)  // si on a atteint le temps programmé
   {
 
     // A COMPLETER
 
 
-    tim2=tim2+del2 ;
+    time1 = time1 + delay1;
+  }
+}
+
+// tache de calcul de la vitesse du moteur
+inline void motorSpeedCalculation() {
+  if (((int)millis() - time2) > 0)  // si il s'est passé 1 seconde depuis la dernière lecture
+  {
+
+    // A COMPLETER
+
+
+    time2 = time2 + delay2;
   }
 }
 
 // tache gérant le démarrage (ou l'arret) progressif des moteurs
-inline void task3() {
-  if (((int)millis()-tim3)>0)  // si il s'est passé 1 seconde depuis la dernière lecture
+inline void progressiveAcceleration() {
+  if (((int)millis() - time3) > 0)  // si il s'est passé 1 seconde depuis la dernière lecture
   {
-    if (nivM1 < nivE1)
-    {  nivM1 += vitdem ;    // accélération du moteur 1
-      if (nivM1> nivE1)        nivM1 = nivE1 ; }
-    if (nivM1 > nivE1)
-    {  nivM1 -= vitdem ;    // décélération du moteur 1
-      if (nivM1 < nivE1)        nivM1 = nivE1 ; }
+    if (m1Voltage < echelon1Voltage) {
+      m1Voltage += startSpeed;  // accélération du moteur 1
+      if (m1Voltage > echelon1Voltage) m1Voltage = echelon1Voltage;
+    }
+    if (m1Voltage > echelon1Voltage) {
+      m1Voltage -= startSpeed;  // décélération du moteur 1
+      if (m1Voltage < echelon1Voltage) m1Voltage = echelon1Voltage;
+    }
 
-    if (nivM2 < nivE2)
-    {  nivM2 += vitdem ;    // accélération du moteur 1
-      if (nivM2> nivE2)        nivM2 = nivE1 ; }
-    if (nivM2 > nivE2)
-    {  nivM2 -= vitdem ;    // décélération du moteur 1
-      if (nivM2 < nivE2)        nivM2 = nivE2 ; }
+    if (m2Voltage < echelon2Voltage) {
+      m2Voltage += startSpeed;  // accélération du moteur 1
+      if (m2Voltage > echelon2Voltage) m2Voltage = echelon1Voltage;
+    }
+    if (m2Voltage > echelon2Voltage) {
+      m2Voltage -= startSpeed;  // décélération du moteur 1
+      if (m2Voltage < echelon2Voltage) m2Voltage = echelon2Voltage;
+    }
 
-    set_motor1(nivM1) ;
-    set_motor2(nivM2) ;
+    set_motor1(m1Voltage);
+    set_motor2(m2Voltage);
 
-    if ((nivM1 == nivE1) && (nivM2 == nivE2))
-      task3on =false;
+    if ((m1Voltage == echelon1Voltage) && (m2Voltage == echelon2Voltage))
+      progressiveAccelerationOn = false;
 
-    tim3=tim3+del3 ;
+    time3 = time3 + delay3;
   }
 }
 
-// tache de détection des obstacles
+// tache de détection des obstacleDetectedacles
 
-inline void task4() {
-  if (((int)millis()-tim4)>0)  // si on a atteint le temps programmé
-  { 
-    if (analogRead(IR_pin)>500)     // on a détecté un obstacle
+inline void collisionDetection() {
+  if (((int)millis() - time4) > 0)  // si on a atteint le temps programmé
+  {
+    if (analogRead(IR_pin) > 500)  // on a détecté un obstacleDetectedacle
     {
-      obst=true ;                   // indique que l'on a détecté un obstacle
-      nivM1=0 ; nivM2=0 ;
-      set_motor1(0) ;
-      set_motor2(0) ;
-      task3on = false ;        // arret du démarrage progressif
+      obstacleDetected = true;  // indique que l'on a détecté un obstacleDetectedacle
+      m1Voltage = 0;
+      m2Voltage = 0;
+      set_motor1(0);
+      set_motor2(0);
+      progressiveAccelerationOn = false;  // arret du démarrage progressif
     }
-    tim4=tim4+del4 ;
+    time4 = time4 + delay4;
   }
 }
 
 // tache de rotation du servomoteur
 
-inline void task5() {
-  if (((int)millis()-tim5)>0)  // si on a atteint le temps programmé
-  { 
+inline void servoRotation() {
+  if (((int)millis() - time5) > 0)  // si on a atteint le temps programmé
+  {
 
     // A COMPLETER EVENTUELLEMENT
 
-    tim5=tim5+del5 ;
+    time5 = time5 + delay5;
   }
 }
 
@@ -661,13 +707,13 @@ inline void task5() {
 ////////////////////////////////////////////////////////////
 
 // interruption du premier codeur incrémental
-void IntIncrem1() {                // interruption du décodeur incrémental
-  int sns = (digitalRead(ENCODER1A) == LOW) ? +1 : -1 ;     // on détermine le sens de rotation
-  CountIncr1 += sns;              // on incrémente le compteur
+void IntIncrem1() {                                     // interruption du décodeur incrémental
+  int sns = (digitalRead(ENCODER1A) == LOW) ? +1 : -1;  // on détermine le sens de rotation
+  CountIncr1 += sns;                                    // on incrémente le compteur
 }
 
 // interruption du deuxième codeur incrémental
-void IntIncrem2() {                // interruption du décodeur incrémental
-  int sns = (digitalRead(ENCODER2A) == LOW) ? -1 : +1 ;     // on détermine le sens de rotation
-  CountIncr2 += sns;              // on incrémente le compteur
+void IntIncrem2() {                                     // interruption du décodeur incrémental
+  int sns = (digitalRead(ENCODER2A) == LOW) ? -1 : +1;  // on détermine le sens de rotation
+  CountIncr2 += sns;                                    // on incrémente le compteur
 }
