@@ -6,9 +6,8 @@ mid_x = 640
 R=0.1
 L=0.5
 
-def find_centroid(path):
+def find_centroid(image):
     # Input Image
-    image = cv2.imread(path)
     h, w = image.shape[:2]
     print (w,h)
 
@@ -55,14 +54,14 @@ def find_centroid(path):
     #cv2.imwrite('out_test.png', im2)
 
 
-def erreur_orientation(path,a):
-    c =(find_centroid(path)[0]-mid_x)-a
+def erreur_orientation(image,a):
+    c =(find_centroid(image)[0]-mid_x)-a
     if abs(c)>=0:
         c=0
     return c
 
-def consigne_orientation(path,v):
-    erreur = erreur_orientation(path,0)
+def consigne_orientation(image,v):
+    erreur = erreur_orientation(image,0)
     w_l = (1/R)*(v - erreur*L/2)
     w_r = (1/R)*(v + erreur*L/2)
     return w_l,w_r
