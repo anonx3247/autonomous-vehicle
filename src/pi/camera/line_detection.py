@@ -50,7 +50,7 @@ def find_centroid(image):
         #cv2.circle(im2, (cx, cy),3,255,-1)
     else:
         print("No Centroid Found")
-        return
+        return None
     #cv2.imwrite('out_test.png', im2)
 
 
