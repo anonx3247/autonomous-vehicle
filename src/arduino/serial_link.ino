@@ -682,6 +682,8 @@ inline void collisionDetection() {
       set_motor1(0);
       set_motor2(0);
       isProgressiveAccelerationOn = false;  // arret du démarrage progressif
+    } else {
+      obstacleDetected = false;
     }
     time4 = time4 + delay4;
   }
