@@ -77,6 +77,8 @@ def connect_to_arduino():
     while not is_connected:
         print("Trying connection to Arduino...")
         write_order(serial_file, Order.HELLO)
+        write_i8(serial_file, 0)  # padding
+        write_i8(serial_file, 0)  # padding
         bytes_array = bytearray(serial_file.read(1))
         if not bytes_array:
             time.sleep(2)
