@@ -119,16 +119,17 @@ def process_commands(arduino):
 
         if commands[0].startswith('repeat '):
             repeat_commands = commands[0][7:].split(',')
+            print('Repeating commands:', repeat_commands)
             while True:
                 if keyboard.is_pressed('s'):
                     break
                 for command in repeat_commands:
+                    time.sleep(1)
                     process_command(arduino, command)
                 if keyboard.is_pressed('s'):
                     break
         else:
             for command in commands:
-                time.sleep(3)
                 if command == "exit":
                     break
                 process_command(arduino, command)
