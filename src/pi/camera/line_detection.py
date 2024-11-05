@@ -67,5 +67,6 @@ def motor_speeds_from_image(image,v):
     error = orientation_error(image,0)
     w_l = (1/R)*(v - error*L/2)
     w_r = (1/R)*(v + error*L/2)
+    print(w_l, w_r)
     return w_l,w_r
 

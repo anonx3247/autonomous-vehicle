@@ -5,6 +5,7 @@ from camera.line_detection import motor_speeds_from_image
 arduino = connect_arduino()
 
 def main():
+    speed = int(input("Enter speed: "))
     while True:
         image = perception()
         if image is None:
