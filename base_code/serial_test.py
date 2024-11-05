@@ -18,9 +18,31 @@ def show_instructions():
     print('R# - turn right for # seconds')
     print('I# - set protection # (0 to disable, 1 to enable)')
 
-# Connect to Arduino
-arduino = ser.Serial('/dev/ttyACM1', 115200, timeout=0.1)
-arduino.write(bytes('A', 'utf-8'))
+def get_serial_ports():
+    """
+    Lists serial ports.
+    :return: ([str]) A list of available serial ports
+    """
+    if sys.platform.startswith('win'):
+        ports = ['COM%s' % (i + 1) for i in range(256)]
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    results = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            results.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return results
+
 def process_commands(arduino):
     while True:
         show_instructions()
@@ -80,4 +102,12 @@ def process_commands(arduino):
             arduino.write(bytes(command, 'utf-8'))
     arduino.close()
 
+# Show ports
+ports = get_serial_ports()
+print(ports)
+port = input('Enter port: ')
+# Connect to Arduino
+arduino = ser.Serial(ports[int(port)], 115200, timeout=0.1)
+arduino.write(bytes('A', 'utf-8'))
+# Process commands
 process_commands(arduino)
