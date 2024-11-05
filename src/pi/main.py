@@ -7,6 +7,9 @@ arduino = connect_arduino()
 def main():
     while True:
         image = perception()
+        if image is None:
+            print("No image")
+            continue
         left, right = motor_speeds_from_image(image, 100)
         set_speed(arduino, left, right)
 
