@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 mid_x = width
 R=0.1
-L=5
+L=0.5
 
 def find_centroid(image):
     # Input Image
