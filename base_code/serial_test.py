@@ -82,7 +82,7 @@ def process_commands(arduino):
             print('Moving forward...')
             t = time.time()
             arduino.write(bytes('C500', 'utf-8'))
-            while time.time() - t < float(command[1:]):
+            while time.time() - t < float(command[1:]) / 2:
                 print('waiting...')
                 pass
             arduino.write(bytes('C0', 'utf-8'))
@@ -90,21 +90,21 @@ def process_commands(arduino):
             print('Moving backward...')
             t = time.time()
             arduino.write(bytes('C-500', 'utf-8'))
-            while time.time() - t < float(command[1:]):
+            while time.time() - t < float(command[1:]) / 2:
                 pass
             arduino.write(bytes('C0', 'utf-8'))
         elif command[0] == 'L':
             print('Turning left...')
             t = time.time()
             arduino.write(bytes('C500 -500', 'utf-8'))
-            while time.time() - t < float(command[1:]):
+            while time.time() - t < float(command[1:]) / 2:
                 pass
             arduino.write(bytes('C0', 'utf-8'))
         elif command[0] == 'R':
             print('Turning right...')
             t = time.time()
             arduino.write(bytes('C-500 500', 'utf-8'))
-            while time.time() - t < float(command[1:]):
+            while time.time() - t < float(command[1:]) / 2:
                 pass
             arduino.write(bytes('C0', 'utf-8'))
         elif command[0] == 'I0':
