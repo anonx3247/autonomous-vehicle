@@ -21,7 +21,7 @@ def perception(feedback = True):
 
     # Input Image
     image = next(frame_source).array
-    image = cv2.resize(image, resolution_target)
+    image = cv2.resize(image, (width // 10, height // 10))
 
     # Clear the stream in preparation for the next frame
     rawCapture.truncate(0)
