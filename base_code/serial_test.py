@@ -118,7 +118,7 @@ def process_commands(arduino):
         import keyboard  # Make sure to install the keyboard module
 
         if commands[0].startswith('repeat '):
-            repeat_commands = commands[0][7:].split(',')
+            repeat_commands = [commands[0][7:]] + commands[1:]
             print('Repeating commands:', repeat_commands)
             while True:
                 if keyboard.is_pressed('s'):
