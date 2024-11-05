@@ -1,8 +1,9 @@
 from __future__ import division
+from perception_students import width, height
 
 import cv2
 import numpy as np
-mid_x = 80
+mid_x = width // 2
 R=0.1
 L=0.5
 

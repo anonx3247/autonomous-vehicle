@@ -158,8 +158,8 @@ def process_commands(arduino):
             if command == "exit":
                 break
     arduino.close()
-# 
-# # Show ports
+ 
+# Show ports
 def connect_and_process_commands():
     ports = get_serial_ports()
     print(ports)
