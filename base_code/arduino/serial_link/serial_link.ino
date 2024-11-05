@@ -123,7 +123,7 @@ void init_arduino() {
   isCustomTaskOn = false;
   motorSpeedCalculationOn();
   isProgressiveAccelerationOn = false;
-  isCollisionDetectionOn = false;
+  isCollisionDetectionOn = true;
   isServoRotationOn = false;
 }
 
@@ -164,11 +164,11 @@ void loop() {
   }
 
   // lancement des differentes taches périodiques
-  if (customTaskOn) customTask();  // tache periodique non définie
-  if (motorSpeedCalculationOn) motorSpeedCalculation();  // tache de calcul de la vitesse moteur toujours en route
-  if (progressiveAccelerationOn) progressiveAcceleration();  // tache d'accélération progressive des moteurs
-  if (collisionDetectionOn) collisionDetection();  // tache de détection de collision
-  if (servoRotationOn) servoRotation();  // tache de détection de collision
+  if (isCustomTaskOn) customTask();  // tache periodique non définie
+  if (isMotorSpeedCalculationOn) motorSpeedCalculation();  // tache de calcul de la vitesse moteur toujours en route
+  if (isProgressiveAccelerationOn) progressiveAcceleration();  // tache d'accélération progressive des moteurs
+  if (isCollisionDetectionOn) collisionDetection();  // tache de détection de collision
+  if (isServoRotationOn) servoRotation();  // tache de détection de collision
 }
 
 
@@ -674,7 +674,9 @@ inline void progressiveAcceleration() {
 inline void collisionDetection() {
   if (((int)millis() - time4) > 0)  // si on a atteint le temps programmé
   {
-    if (analogRead(IR_pin) > 500)  // on a détecté un obstacleDetectedacle
+    float val = analogRead(IR_pin);
+   float cm = IRtoCm(val);
+    if (cm != 0 && cm > 8 && cm < 30)  // on a détecté un obstacleDetectedacle
     {
       obstacleDetected = true;  // indique que l'on a détecté un obstacleDetectedacle
       m1Voltage = 0;
@@ -697,6 +699,18 @@ inline void servoRotation() {
 
     time5 = time5 + delay5;
   }
+}
+
+inline float IRtoCm(float value) {
+  float volts = value * 5.0 / 1024; // 5 volts sur 10 bits
+  float distanceInCm = 0;
+  if (volts < 1) {
+    distanceInCm = 28.0 / volts;
+  } else {
+    volts -= 0.28;
+    distanceInCm = 20.2 / volts;
+  }
+  return distanceInCm;
 }
 
 ////////////////////////////////////////////////////////////
