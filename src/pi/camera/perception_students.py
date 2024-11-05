@@ -4,7 +4,7 @@ import numpy as np
 
 from picamera import PiCamera
 from picamera.array import PiRGBArray
-width, height = 3280, 2464
+width, height = 3280 // 2, 2464 // 2
 resolution_target = (width, height)
 
 camera = PiCamera(sensor_mode = 2)
