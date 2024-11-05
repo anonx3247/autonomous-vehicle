@@ -29,6 +29,7 @@ def perception(feedback = True):
         cv2.imshow("Image traitée", image)
         cv2.waitKey(1)
 
+    return image
 
 
 if __name__ == "__main__":

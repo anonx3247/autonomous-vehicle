@@ -30,7 +30,6 @@ def perception(feedback = True):
         cv2.waitKey(1)
 
 
-
 if __name__ == "__main__":
     while True:
         perception(feedback = True)

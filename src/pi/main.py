@@ -3,7 +3,11 @@ from camera.perception_students import motor_speeds_from_image
 
 arduino = connect_arduino()
 
-while True:
-    image = perception()
-    left, right = motor_speeds_from_image(image, 100)
-    set_speed(arduino, left, right)
+def main():
+    while True:
+        image = perception()
+        left, right = motor_speeds_from_image(image, 100)
+        set_speed(arduino, left, right)
+
+if __name__ == "__main__":
+    main()
