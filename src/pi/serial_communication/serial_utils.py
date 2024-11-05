@@ -194,11 +194,11 @@ commands = {
 def set_servo(arduino, angle):
     arduino.write(bytes(f'G{angle}', 'utf-8'))
 
-def set_speed(arduino, speed, speed2=None):
-    if speed2 is None:
-        arduino.write(bytes(f'C{speed}', 'utf-8'))
+def set_speed(arduino, left, right=None):
+    if right is None:
+        arduino.write(bytes(f'C{left}', 'utf-8'))
     else:
-        arduino.write(bytes(f'C{speed} {speed2}', 'utf-8'))
+        arduino.write(bytes(f'C{left} {right}', 'utf-8'))
 
 def set_protection(arduino, enabled):
     if enabled:
