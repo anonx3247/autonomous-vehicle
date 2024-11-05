@@ -1,7 +1,7 @@
 import serial as ser
 
 # Connect to Arduino
-arduino = ser.Serial('/dev/ttyUSB0', 9600, timeout=1)
+arduino = ser.Serial('/dev/ttyACM0', 9600, timeout=1)
 arduino.write(bytes('A', 'utf-8'))
 
 while True:
