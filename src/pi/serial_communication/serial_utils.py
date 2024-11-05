@@ -158,16 +158,16 @@ def process_commands(arduino):
             if command == "exit":
                 break
     arduino.close()
-
-# Show ports
-ports = get_serial_ports()
-print(ports)
-port = input('Enter port: ')
-# Connect to Arduino
-arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
-arduino.write(bytes('A', 'utf-8'))
-# Process commands
-process_commands(arduino)
+# 
+# # Show ports
+# ports = get_serial_ports()
+# print(ports)
+# port = input('Enter port: ')
+# # Connect to Arduino
+# arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
+# arduino.write(bytes('A', 'utf-8'))
+# # Process commands
+# process_commands(arduino)
 
 
 commands = {
