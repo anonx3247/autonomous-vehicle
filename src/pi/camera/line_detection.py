@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 mid_x = width
 R=0.1
-L=0.5
+L=5
 
 def find_centroid(image):
     # Input Image
@@ -68,6 +68,6 @@ def motor_speeds_from_image(image,v):
     error = orientation_error(image,0)
     w_l = (1/R)*(v - error*L/2)
     w_r = (1/R)*(v + error*L/2)
-    print(w_l, w_r)
+    print('left:', w_l, 'right:', w_r)
     return w_l,w_r
 
