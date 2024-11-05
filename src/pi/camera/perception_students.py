@@ -16,6 +16,8 @@ frame_source = camera.capture_continuous(rawCapture, format="bgr", use_video_por
 
 
 def perception(feedback = True):
+    global frame_source
+    global rawCapture
 
     # Input Image
     image = next(frame_source).array
@@ -28,6 +30,8 @@ def perception(feedback = True):
     if feedback: 
         cv2.imshow("Image traitée", image)
         cv2.waitKey(1)
+    
+    return image
 
 
 if __name__ == "__main__":
