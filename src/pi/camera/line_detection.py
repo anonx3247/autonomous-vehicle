@@ -2,9 +2,9 @@ from __future__ import division
 
 import cv2
 import numpy as np
-mid_x = 640
+mid_x = 80
 R=0.1
-L=5
+L=50
 
 def find_centroid(image):
     # Input Image
