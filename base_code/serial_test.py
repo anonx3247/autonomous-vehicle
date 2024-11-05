@@ -43,7 +43,7 @@ def process_commands(arduino):
             arduino.write(bytes(command, 'utf-8'))
             value = arduino.readline().decode('utf-8').rstrip()
             print(value)
-        elif command == 'F':
+        elif command[0] == 'F':
             print('Moving forward...')
             t = time.time()
             arduino.write(bytes('C500', 'utf-8'))
@@ -51,21 +51,21 @@ def process_commands(arduino):
                 print('waiting...')
                 pass
             arduino.write(bytes('C0', 'utf-8'))
-        elif command == 'B':
+        elif command[0] == 'B':
             print('Moving backward...')
             t = time.time()
             arduino.write(bytes('C-500', 'utf-8'))
             while time.time() - t < float(command[1:]):
                 pass
             arduino.write(bytes('C0', 'utf-8'))
-        elif command == 'L':
+        elif command[0] == 'L':
             print('Turning left...')
             t = time.time()
             arduino.write(bytes('C500 -500', 'utf-8'))
             while time.time() - t < float(command[1:]):
                 pass
             arduino.write(bytes('C0', 'utf-8'))
-        elif command == 'R':
+        elif command[0] == 'R':
             print('Turning right...')
             t = time.time()
             arduino.write(bytes('C-500 500', 'utf-8'))
