@@ -16,9 +16,10 @@ def show_instructions():
     print('B# - move backward for # seconds')
     print('L# - turn left for # seconds')
     print('R# - turn right for # seconds')
+    print('I# - set protection # (0 to disable, 1 to enable)')
 
 # Connect to Arduino
-arduino = ser.Serial('/dev/ttyACM0', 115200, timeout=0.1)
+arduino = ser.Serial('/dev/ttyACM1', 115200, timeout=0.1)
 arduino.write(bytes('A', 'utf-8'))
 def process_commands(arduino):
     while True:
