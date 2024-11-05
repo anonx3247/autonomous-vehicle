@@ -1,5 +1,5 @@
 from __future__ import division
-from perception_students import width, height
+from .perception_students import width, height
 
 import cv2
 import numpy as np
