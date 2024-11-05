@@ -50,18 +50,24 @@ def process_commands(arduino):
     while True:
         show_instructions()
         command = input("Enter command: ")
-        print('command sent:', bytes(command, 'utf-8'))
         if command == "exit":
             break
         elif command == 'A':
             print('Connecting to Arduino...')
             arduino.write(bytes(command, 'utf-8'))
+            time.sleep(0.1)
+            arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
             value = arduino.readline().decode('utf-8').rstrip()
             if value != '':
                 print('Connected to Arduino')
         elif command == 'a':
             print('Disconnecting from Arduino...')
             arduino.write(bytes(command, 'utf-8'))
+            time.sleep(0.1)
+            arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+            value = arduino.readline().decode('utf-8').rstrip()
+            if value == '':
+                print('Disconnected from Arduino')
         elif command == 'N':
             print('Getting encoder values...')
             arduino.write(bytes(command, 'utf-8'))
@@ -101,6 +107,12 @@ def process_commands(arduino):
             while time.time() - t < float(command[1:]):
                 pass
             arduino.write(bytes('C0', 'utf-8'))
+        elif command[0] == 'I0':
+            print('Turning off protection...')
+            arduino.write(bytes(command, 'utf-8'))
+        elif command[0] == 'I1':
+            print('Turning on protection...')
+            arduino.write(bytes(command, 'utf-8'))
         else:
             arduino.write(bytes(command, 'utf-8'))
     arduino.close()
