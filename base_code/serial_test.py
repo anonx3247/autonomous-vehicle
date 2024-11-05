@@ -128,7 +128,7 @@ def process_commands(arduino):
                     break
         else:
             for command in commands:
-                time.sleep(1)
+                time.sleep(3)
                 if command == "exit":
                     break
                 process_command(arduino, command)
