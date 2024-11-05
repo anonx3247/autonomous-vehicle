@@ -1,4 +1,4 @@
-import serial as ser
+import serial
 import time
 import sys
 import glob
@@ -110,7 +110,7 @@ ports = get_serial_ports()
 print(ports)
 port = input('Enter port: ')
 # Connect to Arduino
-arduino = ser.Serial(ports[int(port)], 115200, timeout=0.1)
+arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
 arduino.write(bytes('A', 'utf-8'))
 # Process commands
 process_commands(arduino)
