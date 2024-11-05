@@ -31,6 +31,9 @@ def process_commands(arduino):
         elif command == 'A':
             print('Connecting to Arduino...')
             arduino.write(bytes(command, 'utf-8'))
+            value = arduino.readline().decode('utf-8').rstrip()
+            if value != '':
+                print('Connected to Arduino')
         elif command == 'a':
             print('Disconnecting from Arduino...')
             arduino.write(bytes(command, 'utf-8'))
