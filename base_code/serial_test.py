@@ -48,6 +48,7 @@ def process_commands(arduino):
             t = time.time()
             arduino.write(bytes('C500', 'utf-8'))
             while time.time() - t < float(command[1:]):
+                print('waiting...')
                 pass
             arduino.write(bytes('C0', 'utf-8'))
         elif command == 'B':
