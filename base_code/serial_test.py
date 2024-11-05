@@ -14,7 +14,7 @@ def show_instructions():
     print('T - get motor voltages')
 
 # Connect to Arduino
-arduino = ser.Serial('/dev/ttyACM0', 9600, timeout=1)
+arduino = ser.Serial('/dev/ttyACM0', 115200, timeout=0.1)
 arduino.write(bytes('A', 'utf-8'))
 def process_commands(arduino):
     while True:
