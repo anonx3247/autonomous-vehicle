@@ -1,34 +1,5 @@
 import serial as ser
 
-# Connect to Arduino
-arduino = ser.Serial('/dev/ttyACM0', 9600, timeout=1)
-arduino.write(bytes('A', 'utf-8'))
-
-while True:
-    show_instructions()
-    command = input("Enter command: ")
-    if command == "exit":
-        break
-    elif command == 'A':
-        print('Connecting to Arduino...')
-        arduino.write(bytes(command, 'utf-8'))
-    elif command == 'a':
-        print('Disconnecting from Arduino...')
-        arduino.write(bytes(command, 'utf-8'))
-    elif command == 'N':
-        print('Getting encoder values...')
-        arduino.write(bytes(command, 'utf-8'))
-        value = arduino.readline().decode('utf-8').rstrip()
-        print(value)
-    elif command == 'T':
-        print('Getting motor voltages...')
-        arduino.write(bytes(command, 'utf-8'))
-        value = arduino.readline().decode('utf-8').rstrip()
-        print(value)
-    else:
-        arduino.write(bytes(command, 'utf-8'))
-arduino.close()
-
 def show_instructions():
     print("Available commands:")
     print('exit')
@@ -42,3 +13,33 @@ def show_instructions():
     print('N - get encoder values')
     print('T - get motor voltages')
 
+# Connect to Arduino
+arduino = ser.Serial('/dev/ttyACM0', 9600, timeout=1)
+arduino.write(bytes('A', 'utf-8'))
+def process_commands(arduino):
+    while True:
+        show_instructions()
+        command = input("Enter command: ")
+        if command == "exit":
+            break
+        elif command == 'A':
+            print('Connecting to Arduino...')
+            arduino.write(bytes(command, 'utf-8'))
+        elif command == 'a':
+            print('Disconnecting from Arduino...')
+            arduino.write(bytes(command, 'utf-8'))
+        elif command == 'N':
+            print('Getting encoder values...')
+            arduino.write(bytes(command, 'utf-8'))
+            value = arduino.readline().decode('utf-8').rstrip()
+            print(value)
+        elif command == 'T':
+            print('Getting motor voltages...')
+            arduino.write(bytes(command, 'utf-8'))
+            value = arduino.readline().decode('utf-8').rstrip()
+            print(value)
+        else:
+            arduino.write(bytes(command, 'utf-8'))
+    arduino.close()
+
+process_commands(arduino)
