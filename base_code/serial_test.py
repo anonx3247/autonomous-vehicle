@@ -1,5 +1,5 @@
 import serial as ser
-
+import time
 def show_instructions():
     print("Available commands:")
     print('exit - exit the program')
