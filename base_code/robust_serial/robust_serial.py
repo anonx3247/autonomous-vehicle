@@ -17,8 +17,8 @@ class Order(Enum):
     OBSTACLE = 4
     RECEIVED = 5
     STOP = 6
-    READENCODERr = 7
-    READENCODERl = 8
+    READ_ENCODER_R = 7
+    READ_ENCODER_L = 8
     RESETENC = 9
     
 
@@ -115,11 +115,11 @@ def decode_order(f, byte, debug=True):
             msg = "RECEIVED"
         elif order == Order.STOP:
             msg = "STOP"
-        elif order == Order.READENCODERl:
+        elif order == Order.READ_ENCODER_L:
             msg = "READ_L"
             encoderL = read_i16(f)
             msg = encoderL
-        elif order == Order.READENCODERr:
+        elif order == Order.READ_ENCODER_R:
             msg = "READ_L"
             encoderR = read_i16(f)
             msg = encoderR
