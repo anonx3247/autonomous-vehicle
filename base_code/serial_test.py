@@ -12,6 +12,10 @@ def show_instructions():
     print('d## - move motor # at speed # (speed between -100 and 100, motor between 1 and 2) (Progressive)')
     print('N - get encoder values')
     print('T - get motor voltages')
+    print('F# - move forward for # seconds')
+    print('B# - move backward for # seconds')
+    print('L# - turn left for # seconds')
+    print('R# - turn right for # seconds')
 
 # Connect to Arduino
 arduino = ser.Serial('/dev/ttyACM0', 115200, timeout=0.1)
@@ -39,6 +43,34 @@ def process_commands(arduino):
             arduino.write(bytes(command, 'utf-8'))
             value = arduino.readline().decode('utf-8').rstrip()
             print(value)
+        elif command == 'F':
+            print('Moving forward...')
+            t = time.time()
+            arduino.write(bytes('C500', 'utf-8'))
+            while time.time() - t < float(command[1:]):
+                pass
+            arduino.write(bytes('C0', 'utf-8'))
+        elif command == 'B':
+            print('Moving backward...')
+            t = time.time()
+            arduino.write(bytes('C-500', 'utf-8'))
+            while time.time() - t < float(command[1:]):
+                pass
+            arduino.write(bytes('C0', 'utf-8'))
+        elif command == 'L':
+            print('Turning left...')
+            t = time.time()
+            arduino.write(bytes('C500 -500', 'utf-8'))
+            while time.time() - t < float(command[1:]):
+                pass
+            arduino.write(bytes('C0', 'utf-8'))
+        elif command == 'R':
+            print('Turning right...')
+            t = time.time()
+            arduino.write(bytes('C-500 500', 'utf-8'))
+            while time.time() - t < float(command[1:]):
+                pass
+            arduino.write(bytes('C0', 'utf-8'))
         else:
             arduino.write(bytes(command, 'utf-8'))
     arduino.close()
