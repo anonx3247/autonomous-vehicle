@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 expected_corners = 3
-filename = 'photo_carrefour1.jpg'
+filename = 'photo_carrefour2.jpg'
 img = cv2.imread(filename)
 blur = cv2.blur(img,(6,6))
 ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
@@ -22,19 +22,20 @@ gray = np.float32(dilated_mask)
 
 dst = cv2.cornerHarris(gray,5,3,0.10)
 corners = cv2.goodFeaturesToTrack(gray, 5,0.5,20)
-corners = np.int0(corners)
+corners = np.int32(corners)
 if len(corners) >= expected_corners:
     print("Intersection !")
 for i in corners: 
-    x, y = i.ravel() 
+    x, y = i.ravel()
     print(x,y)
     cv2.circle(img, (x, y),3,255,-1)
 #result is dilated for marking the corners, not important
 dst = cv2.dilate(dst,None)
-cv2.imwrite('out_test.png', img)
+
 # Threshold for an optimal value, it may vary depending on the image.
 img[dst>0.02*dst.max()]=[0,0,255]
 
 #cv2.imshow('dst',img)
 #if cv2.waitKey(0) & 0xff == 27:
-#    cv2.destroyAllWindows()
+#   cv2.destroyAllWindows()
+cv2.imwrite('out_test.png', img)
