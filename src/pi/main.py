@@ -2,7 +2,7 @@ from serial_communication.serial_utils import process_command, connect_arduino, 
 from camera.perception_students import perception
 from camera.line_detection import motor_speeds_from_image
 
-arduino = connect_arduino()
+arduino = connect_arduino(protection=False)
 
 def main():
     speed = int(input("Enter speed: "))

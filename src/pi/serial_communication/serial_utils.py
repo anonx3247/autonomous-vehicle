@@ -22,7 +22,8 @@ def show_instructions():
     print('I# - set protection # (0 to disable, 1 to enable)')
     print('repeat <commands> - repeat the commands indefinitely until "s" is typed')
 
-def connect_arduino():
+def connect_arduino(protection=True):
+    
     ports = get_serial_ports()
     print(ports)
     while True:
@@ -42,6 +43,8 @@ def connect_arduino():
             print('Connection successful')
             break
         print('Failed to connect after 3 attempts. Please enter a new port number.')
+    if not protection:
+        set_protection(arduino, False)
     return arduino
 
 def get_serial_ports():
