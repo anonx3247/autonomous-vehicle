@@ -2,7 +2,7 @@ import serial as ser
 
 def show_instructions():
     print("Available commands:")
-    print('exit')
+    print('exit - exit the program')
     print('A - Connect to Arduino')
     print('a - Disconnect from Arduino')
     print('G# - move servo to angle # (angle between 30 and 150)')
@@ -20,6 +20,7 @@ def process_commands(arduino):
     while True:
         show_instructions()
         command = input("Enter command: ")
+        print('command sent:', bytes(command, 'utf-8'))
         if command == "exit":
             break
         elif command == 'A':
