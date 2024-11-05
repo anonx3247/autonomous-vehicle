@@ -7,6 +7,7 @@ arduino = connect_arduino(protection=False)
 def main():
     speed = int(input("Enter speed: "))
     while True:
+        time.sleep(0.1)
         image = perception()
         if image is None:
             print("No image")
