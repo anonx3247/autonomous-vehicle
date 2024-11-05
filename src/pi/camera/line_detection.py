@@ -59,7 +59,7 @@ def orientation_error(image,a):
     if centroid is None:
         return 0
     c =(centroid[0]-mid_x)-a
-    if abs(c)>=0:
+    if abs(c)<=0:
         c=0
     return c
 
