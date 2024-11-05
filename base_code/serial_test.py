@@ -20,6 +20,7 @@ def show_instructions():
     print('L# - turn left for # seconds')
     print('R# - turn right for # seconds')
     print('I# - set protection # (0 to disable, 1 to enable)')
+    print('repeat <commands> - repeat the commands indefinitely until "s" is typed')
 
 def get_serial_ports():
     """
@@ -46,78 +47,93 @@ def get_serial_ports():
             pass
     return results
 
+def process_command(arduino, command):
+    if command == 'A':
+        print('Connecting to Arduino...')
+        arduino.write(bytes(command, 'utf-8'))
+        time.sleep(0.1)
+        arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+        value = arduino.readline().decode('utf-8').rstrip()
+        if value != '':
+            print('Connected to Arduino')
+    elif command == 'a':
+        print('Disconnecting from Arduino...')
+        arduino.write(bytes(command, 'utf-8'))
+        time.sleep(0.1)
+        arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+        value = arduino.readline().decode('utf-8').rstrip()
+        if value == '':
+            print('Disconnected from Arduino')
+    elif command == 'N':
+        print('Getting encoder values...')
+        arduino.write(bytes(command, 'utf-8'))
+        value = arduino.readline().decode('utf-8').rstrip()
+        print(value)
+    elif command == 'T':
+        print('Getting motor voltages...')
+        arduino.write(bytes(command, 'utf-8'))
+        value = arduino.readline().decode('utf-8').rstrip()
+        print(value)
+    elif command[0] == 'F':
+        print('Moving forward...')
+        t = time.time()
+        arduino.write(bytes('C500', 'utf-8'))
+        while time.time() - t < float(command[1:]) / 2:
+            print('waiting...')
+            pass
+        arduino.write(bytes('C0', 'utf-8'))
+    elif command[0] == 'B':
+        print('Moving backward...')
+        t = time.time()
+        arduino.write(bytes('C-500', 'utf-8'))
+        while time.time() - t < float(command[1:]) / 2:
+            pass
+        arduino.write(bytes('C0', 'utf-8'))
+    elif command[0] == 'L':
+        print('Turning left...')
+        t = time.time()
+        arduino.write(bytes('C500 -500', 'utf-8'))
+        while time.time() - t < float(command[1:]) / 2:
+            pass
+        arduino.write(bytes('C0', 'utf-8'))
+    elif command[0] == 'R':
+        print('Turning right...')
+        t = time.time()
+        arduino.write(bytes('C-500 500', 'utf-8'))
+        while time.time() - t < float(command[1:]) / 2:
+            pass
+        arduino.write(bytes('C0', 'utf-8'))
+    elif command[0] == 'I0':
+        print('Turning off protection...')
+        arduino.write(bytes(command, 'utf-8'))
+    elif command[0] == 'I1':
+        print('Turning on protection...')
+        arduino.write(bytes(command, 'utf-8'))
+    else:
+        arduino.write(bytes(command, 'utf-8'))
+
 def process_commands(arduino):
     while True:
         show_instructions()
         commands = input("Enter commands (comma separated): ").split(',')
-        for command in commands:
+        import keyboard  # Make sure to install the keyboard module
+
+        if commands[0].startswith('repeat '):
+            repeat_commands = commands[0][7:].split(',')
+            while True:
+                if keyboard.is_pressed('s'):
+                    break
+                for command in repeat_commands:
+                    process_command(arduino, command)
+                if keyboard.is_pressed('s'):
+                    break
+        else:
+            for command in commands:
+                if command == "exit":
+                    break
+                process_command(arduino, command)
             if command == "exit":
                 break
-            elif command == 'A':
-                print('Connecting to Arduino...')
-                arduino.write(bytes(command, 'utf-8'))
-                time.sleep(0.1)
-                arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
-                value = arduino.readline().decode('utf-8').rstrip()
-                if value != '':
-                    print('Connected to Arduino')
-            elif command == 'a':
-                print('Disconnecting from Arduino...')
-                arduino.write(bytes(command, 'utf-8'))
-                time.sleep(0.1)
-                arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
-                value = arduino.readline().decode('utf-8').rstrip()
-                if value == '':
-                    print('Disconnected from Arduino')
-            elif command == 'N':
-                print('Getting encoder values...')
-                arduino.write(bytes(command, 'utf-8'))
-                value = arduino.readline().decode('utf-8').rstrip()
-                print(value)
-            elif command == 'T':
-                print('Getting motor voltages...')
-                arduino.write(bytes(command, 'utf-8'))
-                value = arduino.readline().decode('utf-8').rstrip()
-                print(value)
-            elif command[0] == 'F':
-                print('Moving forward...')
-                t = time.time()
-                arduino.write(bytes('C500', 'utf-8'))
-                while time.time() - t < float(command[1:]) / 2:
-                    print('waiting...')
-                    pass
-                arduino.write(bytes('C0', 'utf-8'))
-            elif command[0] == 'B':
-                print('Moving backward...')
-                t = time.time()
-                arduino.write(bytes('C-500', 'utf-8'))
-                while time.time() - t < float(command[1:]) / 2:
-                    pass
-                arduino.write(bytes('C0', 'utf-8'))
-            elif command[0] == 'L':
-                print('Turning left...')
-                t = time.time()
-                arduino.write(bytes('C500 -500', 'utf-8'))
-                while time.time() - t < float(command[1:]) / 2:
-                    pass
-                arduino.write(bytes('C0', 'utf-8'))
-            elif command[0] == 'R':
-                print('Turning right...')
-                t = time.time()
-                arduino.write(bytes('C-500 500', 'utf-8'))
-                while time.time() - t < float(command[1:]) / 2:
-                    pass
-                arduino.write(bytes('C0', 'utf-8'))
-            elif command[0] == 'I0':
-                print('Turning off protection...')
-                arduino.write(bytes(command, 'utf-8'))
-            elif command[0] == 'I1':
-                print('Turning on protection...')
-                arduino.write(bytes(command, 'utf-8'))
-            else:
-                arduino.write(bytes(command, 'utf-8'))
-        if command == "exit":
-            break
     arduino.close()
     arduino.close()
 
