@@ -164,11 +164,11 @@ void loop() {
   }
 
   // lancement des differentes taches périodiques
-  if (customTaskOn) customTask();  // tache periodique non définie
-  if (motorSpeedCalculationOn) motorSpeedCalculation();  // tache de calcul de la vitesse moteur toujours en route
-  if (progressiveAccelerationOn) progressiveAcceleration();  // tache d'accélération progressive des moteurs
-  if (collisionDetectionOn) collisionDetection();  // tache de détection de collision
-  if (servoRotationOn) servoRotation();  // tache de détection de collision
+  if (isCustomTaskOn) customTask();  // tache periodique non définie
+  if (isMotorSpeedCalculationOn) motorSpeedCalculation();  // tache de calcul de la vitesse moteur toujours en route
+  if (isProgressiveAccelerationOn) progressiveAcceleration();  // tache d'accélération progressive des moteurs
+  if (isCollisionDetectionOn) collisionDetection();  // tache de détection de collision
+  if (isServoRotationOn) servoRotation();  // tache de détection de collision
 }
 
 
