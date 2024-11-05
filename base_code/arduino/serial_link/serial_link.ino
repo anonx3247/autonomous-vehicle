@@ -33,11 +33,11 @@ int delay3 = 100;                    // démarrage progressif des moteurs
 int delay4 = 100;                    // tache de détection des obstacleDetectedacles
 int delay5 = 200;                    // tache de détection des obstacleDetectedacles
 int time1, time2, time3, time4, time5;  // temps du prochain evenement
-bool customTaskOn = false;              // lancement de la tache 1 de test d'arrivée
-bool motorSpeedCalculationOn = true;               // lancement de la tache 2 de calcul de vitesse
-bool progressiveAccelerationOn = false;              // lancement de la tache 3 d'accélération progressive
-bool collisionDetectionOn = false;              // lancement de la tache 4 de détection de collision par IR
-bool servoRotationOn = false;              // lancement de la tache 5 de rotation du servomoteur
+bool isCustomTaskOn = false;              // lancement de la tache 1 de test d'arrivée
+bool isMotorSpeedCalculationOn = true;               // lancement de la tache 2 de calcul de vitesse
+bool isProgressiveAccelerationOn = false;              // lancement de la tache 3 d'accélération progressive
+bool isCollisionDetectionOn = false;              // lancement de la tache 4 de détection de collision par IR
+bool isServoRotationOn = false;              // lancement de la tache 5 de rotation du servomoteur
 bool obstacleDetected = false;                 // obstacleDetectedacle détecté
 
 char c, CharIn, m;
@@ -76,23 +76,23 @@ int servoDirection = 1;    // sens de rotation du servomoteur
 //   mise en route des taches périodiques
 /////////////////////////////////////////////////////////////////////////
 inline void customTaskOn() {
-  customTaskOn = true;
+  isCustomTaskOn = true;
   time1 = (int)millis() + delay1;
 }
 inline void motorSpeedCalculationOn() {
-  motorSpeedCalculationOn = true;
+  isMotorSpeedCalculationOn = true;
   time2 = (int)millis() + delay2;
 }
 inline void progressiveAccelerationOn() {
-  progressiveAccelerationOn = true;
+  isProgressiveAccelerationOn = true;
   time3 = (int)millis() + delay3;
 }
 inline void collisionDetectionOn() {
-  collisionDetectionOn = true;
+  isCollisionDetectionOn = true;
   time4 = (int)millis() + delay4;
 }
 inline void servoRotationOn() {
-  servoRotationOn = true;
+  isServoRotationOn = true;
   time5 = (int)millis() + delay5;
 }
 
@@ -118,14 +118,13 @@ void init_arduino() {
   servoMax = 150;
   servoPosition = (servoMin + servoMax) / 2;
   frontServo.write(servoPosition);
-  servoRotationOn = false;
   obstacleDetected = false;
 
-  customTaskOn = false;
+  isCustomTaskOn = false;
   motorSpeedCalculationOn();
-  progressiveAccelerationOn = false;
-  collisionDetectionOn = false;
-  servoRotationOn = false;
+  isProgressiveAccelerationOn = false;
+  isCollisionDetectionOn = false;
+  isServoRotationOn = false;
 }
 
 void setup() {
@@ -363,7 +362,7 @@ void DUALMOTOR_code() {
   // on envoie la commande aux 2 moteurs
   set_motor1(m1Voltage);
   set_motor2(m2Voltage);
-  if ((m1Voltage == 1) && (m2Voltage == 0)) progressiveAccelerationOn = false;
+  if ((m1Voltage == 1) && (m2Voltage == 0)) isProgressiveAccelerationOn = false;
 
   //reponse de la commande
   RetAcquitSimpl();
@@ -448,7 +447,7 @@ void PROTECT_IR_code() {
   delay(1);  // indispensable et pas trop long
   m = GetChar(0);
   if (m == '0') {
-    collisionDetectionOn = false;
+    isCollisionDetectionOn = false;
     obstacleDetected = false;
   } else if (m == '1') {
     collisionDetectionOn();
@@ -457,7 +456,7 @@ void PROTECT_IR_code() {
   if (feedback == 1) Serial.println("OK");
   if (feedback == 2) {
     Serial.print("OK protection moteur : ");
-    Serial.println(collisionDetectionOn);
+    Serial.println(isCollisionDetectionOn);
   }
 }
 
@@ -664,7 +663,7 @@ inline void progressiveAcceleration() {
     set_motor2(m2Voltage);
 
     if ((m1Voltage == echelon1Voltage) && (m2Voltage == echelon2Voltage))
-      progressiveAccelerationOn = false;
+      isProgressiveAccelerationOn = false;
 
     time3 = time3 + delay3;
   }
@@ -682,7 +681,7 @@ inline void collisionDetection() {
       m2Voltage = 0;
       set_motor1(0);
       set_motor2(0);
-      progressiveAccelerationOn = false;  // arret du démarrage progressif
+      isProgressiveAccelerationOn = false;  // arret du démarrage progressif
     }
     time4 = time4 + delay4;
   }
