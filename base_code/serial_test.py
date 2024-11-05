@@ -1,5 +1,8 @@
 import serial as ser
 import time
+import sys
+import glob
+
 def show_instructions():
     print("Available commands:")
     print('exit - exit the program')
