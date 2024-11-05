@@ -11,7 +11,7 @@ def main():
             print("No image")
             continue
         left, right = motor_speeds_from_image(image, 100)
-        set_speed(arduino, left, right)
+        set_speed(arduino, right, left)
 
 if __name__ == "__main__":
     main()
