@@ -79,7 +79,6 @@ def process_command(arduino, command):
         t = time.time()
         arduino.write(bytes('C500', 'utf-8'))
         while time.time() - t < float(command[1:]) / 2:
-            print('waiting...')
             pass
         arduino.write(bytes('C0', 'utf-8'))
     elif command[0] == 'B':
@@ -129,12 +128,12 @@ def process_commands(arduino):
                     break
         else:
             for command in commands:
+                time.sleep(0.1)
                 if command == "exit":
                     break
                 process_command(arduino, command)
             if command == "exit":
                 break
-    arduino.close()
     arduino.close()
 
 # Show ports
