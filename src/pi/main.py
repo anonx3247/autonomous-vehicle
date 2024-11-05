@@ -7,7 +7,7 @@ arduino = connect_arduino()
 def main():
     while True:
         image = perception()
-        left, right = motor_speeds_from_image(image, 100)
+        left, right = motor_speeds_from_image(image, 30)
         set_speed(arduino, left, right)
 
 if __name__ == "__main__":
