@@ -21,8 +21,7 @@ def perception(feedback = True):
 
     # Input Image
     image = next(frame_source).array
-
-    if feedback: cv2.imshow("Image non traitée", image)
+    image = cv2.resize(image, resolution_target)
 
     # Clear the stream in preparation for the next frame
     rawCapture.truncate(0)
