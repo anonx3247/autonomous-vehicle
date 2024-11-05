@@ -160,14 +160,15 @@ def process_commands(arduino):
     arduino.close()
 # 
 # # Show ports
-# ports = get_serial_ports()
-# print(ports)
-# port = input('Enter port: ')
-# # Connect to Arduino
-# arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
-# arduino.write(bytes('A', 'utf-8'))
-# # Process commands
-# process_commands(arduino)
+def connect_and_process_commands():
+    ports = get_serial_ports()
+    print(ports)
+    port = input('Enter port: ')
+    # Connect to Arduino
+    arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
+    arduino.write(bytes('A', 'utf-8'))
+    # Process commands
+    process_commands(arduino)
 
 
 commands = {
