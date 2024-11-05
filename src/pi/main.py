@@ -1,8 +1,9 @@
-from serial_communication.serial_test import process_command, connect_arduino
-from camera.perception_students import perception, motor_speeds
+from serial_communication.serial_utils import process_command, connect_arduino, set_servo, set_speed, set_protection
+from camera.perception_students import motor_speeds_from_image
 
 arduino = connect_arduino()
 
 while True:
-    perception()
-    motor_speeds()
+    image = perception()
+    left, right = motor_speeds_from_image(image, 100)
+    set_speed(arduino, left, right)

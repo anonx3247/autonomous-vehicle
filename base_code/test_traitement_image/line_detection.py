@@ -54,15 +54,15 @@ def find_centroid(image):
     #cv2.imwrite('out_test.png', im2)
 
 
-def erreur_orientation(image,a):
+def orientation_error(image,a):
     c =(find_centroid(image)[0]-mid_x)-a
     if abs(c)>=0:
         c=0
     return c
 
-def consigne_orientation(image,v):
-    erreur = erreur_orientation(image,0)
-    w_l = (1/R)*(v - erreur*L/2)
-    w_r = (1/R)*(v + erreur*L/2)
+def motor_speeds_from_image(image,v):
+    error = orientation_error(image,0)
+    w_l = (1/R)*(v - error*L/2)
+    w_r = (1/R)*(v + error*L/2)
     return w_l,w_r
 

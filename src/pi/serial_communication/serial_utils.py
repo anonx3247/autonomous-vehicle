@@ -22,6 +22,28 @@ def show_instructions():
     print('I# - set protection # (0 to disable, 1 to enable)')
     print('repeat <commands> - repeat the commands indefinitely until "s" is typed')
 
+def connect_arduino():
+    ports = get_serial_ports()
+    print(ports)
+    while True:
+        port = input('Enter port: ')
+        arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
+        arduino.write(bytes('A', 'utf-8'))
+        time.sleep(0.1)
+        value = ''
+        for _ in range(3):
+            arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+            value = arduino.readline().decode('utf-8').rstrip()
+            if value != '':
+                break
+            print('Disconnected from Arduino, retrying...')
+            time.sleep(1)
+        if value != '':
+            print('Connection successful')
+            break
+        print('Failed to connect after 3 attempts. Please enter a new port number.')
+    return arduino
+
 def get_serial_ports():
     """
     Lists serial ports.
@@ -146,3 +168,36 @@ arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
 arduino.write(bytes('A', 'utf-8'))
 # Process commands
 process_commands(arduino)
+
+
+commands = {
+    'CONNECT': 'A',
+    'DISCONNECT': 'a',
+    'GET_ENCODERS': 'N',
+    'GET_MOTOR_VOLTAGES': 'T',
+    'MOVE_FORWARD': 'F',
+    'MOVE_BACKWARD': 'B',
+    'TURN_LEFT': 'L',
+    'TURN_RIGHT': 'R',
+    'SET_PROTECTION': 'I1',
+    'DISABLE_PROTECTION': 'I0',
+    'SET_SPEED': 'C',
+    'SET_SERVO': 'G',
+    'REPEAT': 'repeat',
+    'EXIT': 'exit'
+}
+
+def set_servo(arduino, angle):
+    arduino.write(bytes(f'G{angle}', 'utf-8'))
+
+def set_speed(arduino, speed, speed2=None):
+    if speed2 is None:
+        arduino.write(bytes(f'C{speed}', 'utf-8'))
+    else:
+        arduino.write(bytes(f'C{speed} {speed2}', 'utf-8'))
+
+def set_protection(arduino, enabled):
+    if enabled:
+        arduino.write(bytes(commands['SET_PROTECTION'], 'utf-8'))
+    else:
+        arduino.write(bytes(commands['DISABLE_PROTECTION'], 'utf-8'))
