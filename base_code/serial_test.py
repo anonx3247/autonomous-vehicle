@@ -49,72 +49,76 @@ def get_serial_ports():
 def process_commands(arduino):
     while True:
         show_instructions()
-        command = input("Enter command: ")
+        commands = input("Enter commands (comma separated): ").split(',')
+        for command in commands:
+            if command == "exit":
+                break
+            elif command == 'A':
+                print('Connecting to Arduino...')
+                arduino.write(bytes(command, 'utf-8'))
+                time.sleep(0.1)
+                arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+                value = arduino.readline().decode('utf-8').rstrip()
+                if value != '':
+                    print('Connected to Arduino')
+            elif command == 'a':
+                print('Disconnecting from Arduino...')
+                arduino.write(bytes(command, 'utf-8'))
+                time.sleep(0.1)
+                arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+                value = arduino.readline().decode('utf-8').rstrip()
+                if value == '':
+                    print('Disconnected from Arduino')
+            elif command == 'N':
+                print('Getting encoder values...')
+                arduino.write(bytes(command, 'utf-8'))
+                value = arduino.readline().decode('utf-8').rstrip()
+                print(value)
+            elif command == 'T':
+                print('Getting motor voltages...')
+                arduino.write(bytes(command, 'utf-8'))
+                value = arduino.readline().decode('utf-8').rstrip()
+                print(value)
+            elif command[0] == 'F':
+                print('Moving forward...')
+                t = time.time()
+                arduino.write(bytes('C500', 'utf-8'))
+                while time.time() - t < float(command[1:]) / 2:
+                    print('waiting...')
+                    pass
+                arduino.write(bytes('C0', 'utf-8'))
+            elif command[0] == 'B':
+                print('Moving backward...')
+                t = time.time()
+                arduino.write(bytes('C-500', 'utf-8'))
+                while time.time() - t < float(command[1:]) / 2:
+                    pass
+                arduino.write(bytes('C0', 'utf-8'))
+            elif command[0] == 'L':
+                print('Turning left...')
+                t = time.time()
+                arduino.write(bytes('C500 -500', 'utf-8'))
+                while time.time() - t < float(command[1:]) / 2:
+                    pass
+                arduino.write(bytes('C0', 'utf-8'))
+            elif command[0] == 'R':
+                print('Turning right...')
+                t = time.time()
+                arduino.write(bytes('C-500 500', 'utf-8'))
+                while time.time() - t < float(command[1:]) / 2:
+                    pass
+                arduino.write(bytes('C0', 'utf-8'))
+            elif command[0] == 'I0':
+                print('Turning off protection...')
+                arduino.write(bytes(command, 'utf-8'))
+            elif command[0] == 'I1':
+                print('Turning on protection...')
+                arduino.write(bytes(command, 'utf-8'))
+            else:
+                arduino.write(bytes(command, 'utf-8'))
         if command == "exit":
             break
-        elif command == 'A':
-            print('Connecting to Arduino...')
-            arduino.write(bytes(command, 'utf-8'))
-            time.sleep(0.1)
-            arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
-            value = arduino.readline().decode('utf-8').rstrip()
-            if value != '':
-                print('Connected to Arduino')
-        elif command == 'a':
-            print('Disconnecting from Arduino...')
-            arduino.write(bytes(command, 'utf-8'))
-            time.sleep(0.1)
-            arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
-            value = arduino.readline().decode('utf-8').rstrip()
-            if value == '':
-                print('Disconnected from Arduino')
-        elif command == 'N':
-            print('Getting encoder values...')
-            arduino.write(bytes(command, 'utf-8'))
-            value = arduino.readline().decode('utf-8').rstrip()
-            print(value)
-        elif command == 'T':
-            print('Getting motor voltages...')
-            arduino.write(bytes(command, 'utf-8'))
-            value = arduino.readline().decode('utf-8').rstrip()
-            print(value)
-        elif command[0] == 'F':
-            print('Moving forward...')
-            t = time.time()
-            arduino.write(bytes('C500', 'utf-8'))
-            while time.time() - t < float(command[1:]) / 2:
-                print('waiting...')
-                pass
-            arduino.write(bytes('C0', 'utf-8'))
-        elif command[0] == 'B':
-            print('Moving backward...')
-            t = time.time()
-            arduino.write(bytes('C-500', 'utf-8'))
-            while time.time() - t < float(command[1:]) / 2:
-                pass
-            arduino.write(bytes('C0', 'utf-8'))
-        elif command[0] == 'L':
-            print('Turning left...')
-            t = time.time()
-            arduino.write(bytes('C500 -500', 'utf-8'))
-            while time.time() - t < float(command[1:]) / 2:
-                pass
-            arduino.write(bytes('C0', 'utf-8'))
-        elif command[0] == 'R':
-            print('Turning right...')
-            t = time.time()
-            arduino.write(bytes('C-500 500', 'utf-8'))
-            while time.time() - t < float(command[1:]) / 2:
-                pass
-            arduino.write(bytes('C0', 'utf-8'))
-        elif command[0] == 'I0':
-            print('Turning off protection...')
-            arduino.write(bytes(command, 'utf-8'))
-        elif command[0] == 'I1':
-            print('Turning on protection...')
-            arduino.write(bytes(command, 'utf-8'))
-        else:
-            arduino.write(bytes(command, 'utf-8'))
+    arduino.close()
     arduino.close()
 
 # Show ports
