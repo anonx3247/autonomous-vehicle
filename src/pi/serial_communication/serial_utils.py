@@ -229,7 +229,44 @@ class Arduino:
     
     def connect(self):
         self.connected = False
+        self.write(commands['CONNECT'])
+        while not self.connected:
+            self.check_connection()
+            wait(0.1)
 
     def check_connection(self):
-        ...
+        self.write(commands['GET_ENCODERS'])
+        value = self.read()
+        self.connected = value != ''
+
+    def read(self):
+        return self.arduino.readline().decode('utf-8').rstrip()
     
+    def write(self, command):
+        self.arduino.write(bytes(command, 'utf-8'))
+    
+    def close(self):
+        self.arduino.close()
+    
+    def obstacle_detected(self):
+        self.write(commands['OBSTACLE_DETECTED'])
+        return self.read() == 'OB'
+    
+    def reset_obstacle_detected(self):
+        self.write(commands['RESET_OBSTACLE_DETECTED'])
+    
+    def get_encoders(self):
+        self.write(commands['GET_ENCODERS'])
+        return self.read()
+
+    def set_speed(self, left, right=None):
+        if right is None:
+            self.write(f'C{left}')
+        else:
+            self.write(f'C{left} {right}')
+    
+    def set_protection(self, enabled):
+        if enabled:
+            self.write(commands['SET_PROTECTION'])
+        else:
+            self.write(commands['DISABLE_PROTECTION'])
