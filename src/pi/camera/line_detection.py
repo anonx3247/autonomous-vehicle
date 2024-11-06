@@ -84,6 +84,9 @@ def find_direction(image):
         print("No white points found")
         return None
 
+    if len(white_points) == 0:
+        print("No white points found")
+        return 0
     # Run linear regression on the white points
     X = white_points[:, 1]  # x-coordinates
     print(X.shape)
@@ -91,7 +94,6 @@ def find_direction(image):
     print(y.shape)
     #reg = LinearRegression().fit(X, y)
     reg = np.polyfit(X, y, 1)
-
     # Calculate the angle of the line with the vertical
     angle = np.arctan(reg[0]) * 180 / np.pi
     print("Angle with vertical: {:.2f} degrees".format(angle))
