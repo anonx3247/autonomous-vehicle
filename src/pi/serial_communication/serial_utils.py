@@ -12,8 +12,6 @@ def connect_arduino(protection=True, port_selection=True):
         port = input('Enter port: ')
         arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
         arduino.write(bytes('A', 'utf-8'))
-        arduino.write(0) # padding
-        arduino.write(0) # padding  
         value = ''
         for _ in range(3):
             arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected

@@ -91,7 +91,7 @@ def find_direction(image):
     angle = np.arctan(reg[0]) * 180 / np.pi
     print("Angle with vertical: {:.2f} degrees".format(angle))
 
-    return angle
+    return -angle
 
 def motor_speeds_from_image_direction(image,v, error_weight, speed_factor):
     angle = find_direction(image)
