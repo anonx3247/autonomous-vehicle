@@ -32,14 +32,11 @@ def connect_arduino(protection=True, port_selection=True):
         arduino.write(bytes('A', 'utf-8'))
         value = ''
         for _ in range(3):
-            wait(0.1)   
             arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
-            wait(0.1)
             value = arduino.readline().decode('utf-8').rstrip()
             if value != '':
                 break
             print('Disconnected from Arduino, retrying...')
-            wait(1)
         if value != '':
             print('Connection successful')
             break
