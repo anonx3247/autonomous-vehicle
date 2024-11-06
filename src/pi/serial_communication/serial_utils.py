@@ -219,3 +219,17 @@ def obstacle_detected(arduino):
 
 def reset_obstacle_detected(arduino):
     arduino.write(bytes(commands['RESET_OBSTACLE_DETECTED'], 'utf-8'))
+
+class Arduino:
+    def __init__(self, port, baudrate=115200, timeout=0.1, attempt_connection=True):
+        self.arduino = serial.Serial(port, baudrate, timeout=timeout)
+        self.connected = False
+        if attempt_connection:
+            self.connect()
+    
+    def connect(self):
+        self.connected = False
+
+    def check_connection(self):
+        
+    

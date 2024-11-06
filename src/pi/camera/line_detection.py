@@ -4,8 +4,8 @@ from .perception_students import width, height
 import cv2
 import numpy as np
 mid_x = width // 2
-R=0.1
-L=5
+tread_length = 0.1
+error_amplitude = 1
 
 def find_centroid(image):
     # Input Image
@@ -56,24 +56,24 @@ def find_centroid(image):
     #cv2.imwrite('out_test.png', im2)
 
 
-def orientation_error(image,a):
+def orientation_error(image,bias=0):
     centroid = find_centroid(image)
     if centroid is None:
         return 0
-    c =(centroid[0]-mid_x)-a
-    if abs(c)<=0:
-        c=0
+    c = (centroid[0]-mid_x)
+    if abs(c) - bias <= 0:
+        c = 0
     return c
 
-def motor_speeds_from_image(image,v):
-    error = orientation_error(image,0)
-    w_l = (1/R)*(v - error*L/2)
-    w_r = (1/R)*(v + error*L/2)
+def motor_speeds_from_image(image,v, max_speed=450):
+    error = orientation_error(image,bias=0)
+    left_speed = (1/tread_length)*(v - error*error_amplitude/2)
+    right_speed = (1/tread_length)*(v + error*error_amplitude/2)
 
-    if (abs(w_l) > 450):
-        w_l = 450 if w_l > 0 else -450
-    if (abs(w_r) > 450):
-        w_r = 450 if w_r > 0 else -450
-    print('left:', w_l, 'right:', w_r)
-    return (w_l,w_r)
+    if (abs(left_speed) > max_speed):
+        left_speed = max_speed if left_speed > 0 else -max_speed
+    if (abs(right_speed) > max_speed):
+        right_speed = max_speed if right_speed > 0 else -max_speed
+    print('left:', left_speed, 'right:', right_speed)
+    return (left_speed,right_speed)
 
