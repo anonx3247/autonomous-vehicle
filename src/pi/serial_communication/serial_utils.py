@@ -177,10 +177,10 @@ def set_servo(arduino, angle):
 def set_speed(arduino, left, right=None):
     if right is None:
         arduino.write(bytes(f'C{left}', 'utf-8'))
-        print(bytes(f'C{left}', 'utf-8'))
+        #print(bytes(f'C{left}', 'utf-8'))
     else:
         arduino.write(bytes(f'C{left} {right}', 'utf-8'))
-        print(bytes(f'C{left} {right}', 'utf-8'))
+        #print(bytes(f'C{left} {right}', 'utf-8'))
 
 def set_prog_speed(arduino, left, right):
     arduino.write(bytes(f'D{left} {right}', 'utf-8'))

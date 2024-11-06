@@ -4,7 +4,7 @@ import cv2
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 full_width, full_height = 3280, 2464
-width, height = full_width // 10, full_height // 10
+width, height = full_width // 20, full_height // 20
 resolution_target = (width, height)
 
 camera = PiCamera(sensor_mode = 2)
@@ -21,7 +21,7 @@ def perception(feedback = True):
 
     # Input Image
     image = next(frame_source).array
-    image_to_show = cv2.resize(image, (width // 10, height // 10))
+    if feedback: image_to_show = cv2.resize(image, (width // 20, height // 20))
 
     # Clear the stream in preparation for the next frame
     rawCapture.truncate(0)
@@ -30,11 +30,6 @@ def perception(feedback = True):
         show_image(image_to_show)
     
     return image
-
-
-if __name__ == "__main__":
-    while True:
-        perception(feedback = True)
 
 def show_image(image):
     cv2.imshow("Image traitée", image)

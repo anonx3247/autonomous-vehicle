@@ -3,7 +3,6 @@ from camera.perception_students import perception
 from camera.line_detection import motor_speeds_from_image_direction, motor_speeds_from_image_centroid
 from utils import wait, floor
 from camera.perception_students import show_image
-from camera.line_detection import save_data
 
 arduino = connect_arduino(protection=True)
 
@@ -27,6 +26,3 @@ def follow_line():
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
             set_speed(arduino, left, right)
-        if i % 100 == 0:
-            print("Saving data")
-            save_data()
