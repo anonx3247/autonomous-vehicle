@@ -485,7 +485,8 @@ void OBSTACLE_DETECTED() {
   if (communicationMode == 2) {
     write_i16(1);
   } else {
-    sayObstacleDetected();
+    if (obstacleDetected == false) Serial.println("OK");
+    else Serial.println("OB");
   }
 }
 
