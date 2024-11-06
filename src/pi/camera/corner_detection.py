@@ -29,6 +29,7 @@ def corner_detection(img,a=100):
     detect_inter = False
     
     li_corners = []
+    print(len(corners))
     for i in corners: 
         x, y = i.ravel()
         if abs(x-mid_x)<a:
