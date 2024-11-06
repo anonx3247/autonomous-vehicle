@@ -6,8 +6,8 @@ from camera.perception_students import show_image
 from camera.corner_detection import corner_detection
 
 arduino = connect_arduino(protection=True)
-intersection_detected = False
 def follow_line():
+    intersection_detected = False
     speed = input("Enter speed: ")
     error_weight = input("Enter error weight (L): ")
     speed_factor = input("Enter speed factor (1/R): ")
