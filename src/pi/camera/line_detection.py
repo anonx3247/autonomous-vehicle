@@ -47,27 +47,27 @@ def find_centroid(image):
         cx = int(M['m10']/M['m00'])
         cy = int(M['m01']/M['m00'])
         print("Centroid of the biggest area: ({}, {})".format(cx, cy))
-        return (cx, cy)
-        #cv2.circle(im2, (cx, cy),3,255,-1)
+        cv2.circle(im2, (cx, cy),3,255,-1)
+        return (cx, cy), im2
     else:
         print("No Centroid Found")
-        return None
+        return None, im2
     #cv2.imwrite('out_test.png', im2)
 
 
 def orientation_error(image,a):
-    centroid = find_centroid(image)
+    centroid, im2 = find_centroid(image)
     if centroid is None:
-        return 0
+        return 0, im2
     c =(centroid[0]-mid_x)-a
     if abs(c)<=0:
         c=0
-    return c
+    return c, im2
 
 def motor_speeds_from_image(image,v):
-    error = orientation_error(image,0)
+    error, im2 = orientation_error(image,0)
     w_l = (1/R)*(v - error*L/2)
     w_r = (1/R)*(v + error*L/2)
     print('left:', w_l, 'right:', w_r)
-    return w_l,w_r
+    return (w_l,w_r), im2
 

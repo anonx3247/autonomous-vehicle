@@ -188,7 +188,9 @@ commands = {
     'SET_SPEED': 'C',
     'SET_SERVO': 'G',
     'REPEAT': 'repeat',
-    'EXIT': 'exit'
+    'EXIT': 'exit',
+    'OBSTACLE_DETECTED': 'e',
+    'RESET_OBSTACLE_DETECTED': 'E'
 }
 
 def set_servo(arduino, angle):
@@ -207,3 +209,10 @@ def set_protection(arduino, enabled):
         arduino.write(bytes(commands['SET_PROTECTION'], 'utf-8'))
     else:
         arduino.write(bytes(commands['DISABLE_PROTECTION'], 'utf-8'))
+
+def obstacle_detected(arduino):
+    arduino.write(bytes(commands['OBSTACLE_DETECTED'], 'utf-8'))
+    time.sleep(0.1)
+    return arduino.readline().decode('utf-8').rstrip() == 'OB'
+def reset_obstacle_detected(arduino):
+    arduino.write(bytes(commands['RESET_OBSTACLE_DETECTED'], 'utf-8'))

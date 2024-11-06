@@ -481,6 +481,19 @@ void ENCODER_DUAL_code() {
   }
 }
 
+void OBSTACLE_DETECTED() {
+  if (communicationMode == 2) {
+    write_i16(1);
+  } else {
+    Serial.println("OB");
+  }
+}
+
+void RESET_OBSTACLE_DETECTED() {
+  obstacleDetected = false;
+  RetAcquitSimpl();
+}
+
 
 // renvoie le temps courant et la position d'un encodeur
 void ENCODERS_TIME_code() {
@@ -564,7 +577,7 @@ void (*UpperFn[20])() = {
   RESETENC_code,                                // B
   DUALMOTOR_code,                               // C
   DUALMOTORSLOW_code,                           // D
-  dummy,                                        // E
+  RESET_OBSTACLE_DETECTED,                      // E
   dummy,                                        // F
   SERVO_code,                                   // G
   dummy,                                        // H
@@ -583,7 +596,7 @@ void (*LowerFn[20])() = {
   RESETENC_code,                                // b
   SINGLEMOTOR_code,                             // c
   DUALMOTORSLOW_code,                           // d
-  dummy,                                        // e
+  OBSTACLE_DETECTED,                            // e
   dummy, SERVO_minmax, dummy,                   // f,g,h
   PROTECT_IR_code, dummy, dummy, dummy, dummy,  // i,J,K,L,M
   ENCODER_DUAL_code,                            // n
@@ -682,9 +695,7 @@ inline void collisionDetection() {
       set_motor1(0);
       set_motor2(0);
       isProgressiveAccelerationOn = false;  // arret du démarrage progressif
-    } else {
-      obstacleDetected = false;
-    }
+    } 
     time4 = time4 + delay4;
   }
 }

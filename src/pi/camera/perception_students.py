@@ -27,8 +27,7 @@ def perception(feedback = True):
     rawCapture.truncate(0)
     
     if feedback: 
-        cv2.imshow("Image traitée", image_to_show)
-        cv2.waitKey(1)
+        show_image(image_to_show)
     
     return image
 
@@ -36,3 +35,7 @@ def perception(feedback = True):
 if __name__ == "__main__":
     while True:
         perception(feedback = True)
+
+def show_image(image):
+    cv2.imshow("Image traitée", image)
+    cv2.waitKey(1)
