@@ -29,6 +29,7 @@ def connect_arduino(protection=True, port_selection=True):
     while True:
         port = input('Enter port: ')
         arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
+        wait(0.1)
         arduino.write(bytes('A', 'utf-8'))
         wait(0.1)
         value = ''
