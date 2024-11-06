@@ -11,8 +11,7 @@ lefts = []
 rights = []
 errors = []
 
-last_left = 0
-last_right = 0
+last_error = 0
 def image_to_white_points(image):
     blur = cv2.blur(image,(5,5))
     threshold =  190 #168
