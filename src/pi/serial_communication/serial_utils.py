@@ -213,13 +213,9 @@ def set_protection(arduino, enabled):
 
 def obstacle_detected(arduino):
     arduino.write(bytes(commands['OBSTACLE_DETECTED'], 'utf-8'))
-    wait(0.1)
     print('Checking obstacle detected...')
-    for _ in range(3):
-        response = arduino.readline().decode('utf-8').rstrip()
-        if response in ['OK', 'OB']:
-            return response == 'OB'
-    print('Obstacle not detected')
-    return False
+    response = arduino.readline().decode('utf-8').rstrip()
+    return response == 'OB'
+
 def reset_obstacle_detected(arduino):
     arduino.write(bytes(commands['RESET_OBSTACLE_DETECTED'], 'utf-8'))
