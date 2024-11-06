@@ -7,21 +7,22 @@ from camera.perception_students import show_image
 arduino = connect_arduino(protection=True)
 
 def follow_line():
-    speed = int(input("Enter speed: "))
-    error_weight = float(input("Enter error weight (L): "))
-    speed_factor = float(input("Enter speed factor (1/R): "))
-    i = 0
+    speed = input("Enter speed: ")
+    error_weight = input("Enter error weight (L): ")
+    speed_factor = input("Enter speed factor (1/R): ")
+    speed = int(speed) if speed.isdigit() else 50
+    error_weight = float(error_weight) if error_weight.replace('.', '', 1).isdigit() else 0.5
+    speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
     while True:
-        i += 1
         image = perception(feedback=False)
         if image is None:
             print("No image")
             continue
-        #if obstacle_detected(arduino):
-            #set_speed(arduino, 0, 0)
-        #    print("Obstacle detected")
-        #    wait(0.5)
-        #    reset_obstacle_detected(arduino)
+        if obstacle_detected(arduino):
+            set_speed(arduino, 0, 0)
+            print("Obstacle detected")
+            wait(0.5)
+            reset_obstacle_detected(arduino)
         else:
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)

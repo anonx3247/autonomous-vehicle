@@ -10,6 +10,7 @@ error_amplitude = 3
 lefts = []
 rights = []
 errors = []
+# L = 0.5, R = 2, V = 50
 
 last_error = 0
 def image_to_white_points(image):
