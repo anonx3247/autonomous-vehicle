@@ -10,6 +10,9 @@ error_amplitude = 3
 lefts = []
 rights = []
 errors = []
+
+last_left = 0
+last_right = 0
 def image_to_white_points(image):
     blur = cv2.blur(image,(5,5))
     ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
@@ -58,10 +61,11 @@ def find_centroid(image):
 def orientation_error(image,bias=0):
     centroid = find_centroid(image)
     if centroid is None:
-        return 0
+        return last_error
     c = (centroid[0]-mid_x)
     if abs(c) - bias <= 0:
         c = 0
+    last_error = c
     return c
 
 def motor_speeds_from_image_centroid(image,v, L, R, max_speed=450):
