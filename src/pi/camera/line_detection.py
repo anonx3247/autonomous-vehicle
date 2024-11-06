@@ -7,7 +7,9 @@ import numpy as np
 mid_x = width // 2
 tread_length = 0.1
 error_amplitude = 3
-
+lefts = []
+rights = []
+errors = []
 def image_to_white_points(image):
     blur = cv2.blur(image,(5,5))
     ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
@@ -63,10 +65,14 @@ def orientation_error(image,bias=0):
     return c
 
 def motor_speeds_from_image_centroid(image,v, L, R, max_speed=450):
+    global lefts, rights, errors
     error = orientation_error(image,bias=0)
     error = error ** 2 if error >= 0 else -error ** 2
+    errors.append(error)
     left_speed = R*(v - error*L/2)
     right_speed = R*(v + error*L/2)
+    lefts.append(left_speed)
+    rights.append(right_speed)
     
     # if (abs(left_speed) > max_speed):
     #     left_speed = max_speed if left_speed > 0 else -max_speed
@@ -99,3 +105,9 @@ def motor_speeds_from_image_direction(image,v, error_weight, speed_factor):
     left_speed = speed_factor * (v - angle * error_weight/2)
     right_speed = speed_factor * (v + angle * error_weight/2)
     return (left_speed, right_speed)
+
+def save_data():
+    global lefts, rights, errors
+    np.save('lefts.npy', lefts)
+    np.save('rights.npy', rights)
+    np.save('errors.npy', errors)

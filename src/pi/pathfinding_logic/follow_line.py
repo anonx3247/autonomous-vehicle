@@ -10,7 +10,9 @@ def follow_line():
     speed = int(input("Enter speed: "))
     error_weight = float(input("Enter error weight (L): "))
     speed_factor = float(input("Enter speed factor (1/R): "))
+    i = 0
     while True:
+        i += 1
         image = perception(feedback=False)
         if image is None:
             print("No image")
@@ -24,3 +26,6 @@ def follow_line():
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
             set_speed(arduino, left, right)
+        if i % 100 == 0:
+            print("Saving data")
+            save_data()
