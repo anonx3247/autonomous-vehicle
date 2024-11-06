@@ -34,6 +34,7 @@ def find_centroid(image):
 
     # Convert to HSV color space
     dilated_mask = image_to_white_points(image)
+    cv2.imshow('dilated_mask', dilated_mask)
 
     # Find the different contours
     contours, hierarchy = cv2.findContours(dilated_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
