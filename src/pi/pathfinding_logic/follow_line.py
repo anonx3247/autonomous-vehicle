@@ -1,6 +1,6 @@
 from serial_communication.serial_utils import connect_arduino, set_speed, obstacle_detected, reset_obstacle_detected
 from camera.perception_students import perception
-from camera.line_detection import motor_speeds_from_image
+from camera.line_detection import motor_speeds_from_image_direction
 from utils import wait, floor
 from camera.perception_students import show_image
 
@@ -8,8 +8,8 @@ arduino = connect_arduino(protection=True)
 
 def follow_line():
     speed = 70
-    L = float(input("Enter L: "))
-    R = float(input("Enter R: "))
+    error_weight = float(input("Enter error weight (L): "))
+    speed_factor = float(input("Enter speed factor (1/R): "))
     while True:
         image = perception(feedback=False)
         if image is None:
@@ -21,6 +21,6 @@ def follow_line():
             wait(0.5)
             reset_obstacle_detected(arduino)
         else:
-            (left, right) = motor_speeds_from_image(image, speed, L, R)
+            (left, right) = motor_speeds_from_image_direction(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
             set_speed(arduino, left=left, right=right)

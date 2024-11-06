@@ -3,24 +3,6 @@ import time
 import sys
 import glob
 from utils import wait
-def show_instructions():
-    print("Available commands:")
-    print('exit - exit the program')
-    print('A - Connect to Arduino')
-    print('a - Disconnect from Arduino')
-    print('G# - move servo to angle # (angle between 30 and 150)')
-    print('C# - move motors at speed # (speed between -100 and 100)')
-    print('c## - move motor # at speed # (speed between -100 and 100, motor between 1 and 2)')
-    print('D# - move motors at speed # (speed between -100 and 100) (Progressive)')
-    print('d## - move motor # at speed # (speed between -100 and 100, motor between 1 and 2) (Progressive)')
-    print('N - get encoder values')
-    print('T - get motor voltages')
-    print('F# - move forward for # seconds')
-    print('B# - move backward for # seconds')
-    print('L# - turn left for # seconds')
-    print('R# - turn right for # seconds')
-    print('I# - set protection # (0 to disable, 1 to enable)')
-    print('repeat <commands> - repeat the commands indefinitely until "s" is typed')
 
 def connect_arduino(protection=True, port_selection=True):
     
@@ -74,7 +56,6 @@ def process_command(arduino, command):
     if command == 'A':
         print('Connecting to Arduino...')
         arduino.write(bytes(command, 'utf-8'))
-        wait(0.1)
         arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
         value = arduino.readline().decode('utf-8').rstrip()
         if value != '':
@@ -82,7 +63,6 @@ def process_command(arduino, command):
     elif command == 'a':
         print('Disconnecting from Arduino...')
         arduino.write(bytes(command, 'utf-8'))
-        wait(0.1)
         arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
         value = arduino.readline().decode('utf-8').rstrip()
         if value == '':

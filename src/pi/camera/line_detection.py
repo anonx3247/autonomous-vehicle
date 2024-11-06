@@ -1,5 +1,6 @@
 from __future__ import division
 from .perception_students import width, height
+from sklearn.linear_model import LinearRegression
 
 import cv2
 import numpy as np
@@ -7,30 +8,26 @@ mid_x = width // 2
 tread_length = 0.1
 error_amplitude = 3
 
+def image_to_white_points(image):
+    blur = cv2.blur(image,(5,5))
+    ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
+    hsv = cv2.cvtColor(thresh1, cv2.COLOR_RGB2HSV)
+    lower_white = np.array([0, 0, 168])
+    upper_white = np.array([172, 111, 255])
+    mask = cv2.inRange(hsv, lower_white, upper_white)
+    kernel_erode = np.ones((6,6), np.uint8)
+    eroded_mask = cv2.erode(mask, kernel_erode, iterations=1)
+    kernel_dilate = np.ones((4,4), np.uint8)
+    dilated_mask = cv2.dilate(eroded_mask, kernel_dilate, iterations=1)
+    return dilated_mask
+
 def find_centroid(image):
     # Input Image
     h, w = image.shape[:2]
     print (w,h)
 
     # Convert to HSV color space
-
-    blur = cv2.blur(image,(5,5))
-    #ret,thresh1 = cv2.threshold(image,127,255,cv2.THRESH_BINARY)
-    ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
-    hsv = cv2.cvtColor(thresh1, cv2.COLOR_RGB2HSV)
-
-    # Define range of white color in HSV
-    lower_white = np.array([0, 0, 168])
-    upper_white = np.array([172, 111, 255])
-    # Threshold the HSV image
-    mask = cv2.inRange(hsv, lower_white, upper_white)
-    #cv2.imwrite('out_test.png', mask)
-    # Remove noise
-    kernel_erode = np.ones((6,6), np.uint8)
-
-    eroded_mask = cv2.erode(mask, kernel_erode, iterations=1)
-    kernel_dilate = np.ones((4,4), np.uint8)
-    dilated_mask = cv2.dilate(eroded_mask, kernel_dilate, iterations=1)
+    dilated_mask = image_to_white_points(image)
 
     # Find the different contours
     contours, hierarchy = cv2.findContours(dilated_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -65,7 +62,7 @@ def orientation_error(image,bias=0):
         c = 0
     return c
 
-def motor_speeds_from_image(image,v, L, R, max_speed=450):
+def motor_speeds_from_image_centroid(image,v, L, R, max_speed=450):
     error = orientation_error(image,bias=0)
     left_speed = (1/R)*(v - error*L/2)
     right_speed = (1/R)*(v + error*L/2)
@@ -77,3 +74,28 @@ def motor_speeds_from_image(image,v, L, R, max_speed=450):
     print('left:', left_speed, 'right:', right_speed)
     return (left_speed,right_speed)
 
+def find_direction(image):
+    image = cv2.resize(image, (width // 3, height // 3), fx=0.1, fy=0.1)
+    dilated_mask = image_to_white_points(image)
+    white_points = np.column_stack(np.where(dilated_mask > 0))
+
+    if len(white_points) == 0:
+        print("No white points found")
+        return None
+
+    # Run linear regression on the white points
+    X = white_points[:, 1].reshape(-1, 1)  # x-coordinates
+    y = white_points[:, 0]  # y-coordinates
+    reg = LinearRegression().fit(X, y)
+
+    # Calculate the angle of the line with the vertical
+    angle = np.arctan(reg.coef_[0]) * 180 / np.pi
+    print("Angle with vertical: {:.2f} degrees".format(angle))
+
+    return angle
+
+def motor_speeds_from_image_direction(image,v, error_weight, speed_factor):
+    angle = find_direction(image)
+    left_speed = speed_factor * (v - angle * error_weight/2)
+    right_speed = speed_factor * (v + angle * error_weight/2)
+    return (left_speed, right_speed)
