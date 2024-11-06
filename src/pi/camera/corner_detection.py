@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from line_detection import image_to_white_points
+from .line_detection import image_to_white_points
 
 def corner_detection(img,a=100):
     global mid_x
