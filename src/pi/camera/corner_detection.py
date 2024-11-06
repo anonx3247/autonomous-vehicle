@@ -3,7 +3,7 @@ import numpy as np
 from .line_detection import image_to_white_points
 
 def corner_detection(img,a=100):
-    global mid_x
+    expected_corners = 3
     dilated_mask = image_to_white_points(img)
     gray = np.float32(dilated_mask)
 
