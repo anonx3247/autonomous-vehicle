@@ -2,7 +2,7 @@ import serial
 import time
 import sys
 import glob
-
+from utils import wait
 def show_instructions():
     print("Available commands:")
     print('exit - exit the program')
@@ -30,7 +30,7 @@ def connect_arduino(protection=True):
         port = input('Enter port: ')
         arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
         arduino.write(bytes('A', 'utf-8'))
-        time.sleep(0.1)
+        wait(0.1)
         value = ''
         for _ in range(3):
             arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
@@ -38,7 +38,7 @@ def connect_arduino(protection=True):
             if value != '':
                 break
             print('Disconnected from Arduino, retrying...')
-            time.sleep(1)
+            wait(1)
         if value != '':
             print('Connection successful')
             break
@@ -76,7 +76,7 @@ def process_command(arduino, command):
     if command == 'A':
         print('Connecting to Arduino...')
         arduino.write(bytes(command, 'utf-8'))
-        time.sleep(0.1)
+        wait(0.1)
         arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
         value = arduino.readline().decode('utf-8').rstrip()
         if value != '':
@@ -84,7 +84,7 @@ def process_command(arduino, command):
     elif command == 'a':
         print('Disconnecting from Arduino...')
         arduino.write(bytes(command, 'utf-8'))
-        time.sleep(0.1)
+        wait(0.1)
         arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
         value = arduino.readline().decode('utf-8').rstrip()
         if value == '':
@@ -212,7 +212,11 @@ def set_protection(arduino, enabled):
 
 def obstacle_detected(arduino):
     arduino.write(bytes(commands['OBSTACLE_DETECTED'], 'utf-8'))
-    time.sleep(0.1)
-    return arduino.readline().decode('utf-8').rstrip() == 'OB'
+    wait(0.1)
+    for _ in range(3):
+        response = arduino.readline().decode('utf-8').rstrip()
+        if response in ['OK', 'OB']:
+            return response == 'OB'
+    return False
 def reset_obstacle_detected(arduino):
     arduino.write(bytes(commands['RESET_OBSTACLE_DETECTED'], 'utf-8'))
