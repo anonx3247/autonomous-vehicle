@@ -77,8 +77,9 @@ def motor_speeds_from_image_centroid(image,v, L, R, max_speed=450):
 def find_direction(image):
     image = cv2.resize(image, (width // 3, height // 3), fx=0.1, fy=0.1)
     dilated_mask = image_to_white_points(image)
+    print(dilated_mask.shape)
     white_points = np.column_stack(np.where(dilated_mask > 0))
-
+    print(white_points.shape)
     if len(white_points) == 0:
         print("No white points found")
         return None
