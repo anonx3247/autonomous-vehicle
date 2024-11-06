@@ -23,7 +23,7 @@ def follow_line():
         if detected:
             print("Intersection detected")
             intersection_detected = True
-        if intersection_detected and not detected:
+        elif intersection_detected:
             set_speed(arduino, 0, 0)
             wait(0.5)
             set_speed(arduino, -500, 500)
