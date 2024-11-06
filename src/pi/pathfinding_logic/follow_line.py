@@ -9,7 +9,6 @@ arduino = connect_arduino(protection=True)
 def follow_line():
     speed = 100
     while True:
-        wait(0.1)
         image = perception(feedback=False)
         if image is None:
             print("No image")
