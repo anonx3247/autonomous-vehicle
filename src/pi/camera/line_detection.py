@@ -77,21 +77,14 @@ def motor_speeds_from_image_centroid(image,v, L, R, max_speed=450):
 def find_direction(image):
     image = cv2.resize(image, (width // 3, height // 3), fx=0.1, fy=0.1)
     dilated_mask = image_to_white_points(image)
-    print(dilated_mask.shape)
     white_points = np.column_stack(np.where(dilated_mask > 0))
-    print(white_points.shape)
-    if len(white_points) == 0:
-        print("No white points found")
-        return None
 
     if len(white_points) == 0:
         print("No white points found")
         return 0
     # Run linear regression on the white points
     X = white_points[:, 1]  # x-coordinates
-    print(X.shape)
     y = white_points[:, 0]  # y-coordinates
-    print(y.shape)
     #reg = LinearRegression().fit(X, y)
     reg = np.polyfit(X, y, 1)
     # Calculate the angle of the line with the vertical
@@ -102,9 +95,6 @@ def find_direction(image):
 
 def motor_speeds_from_image_direction(image,v, error_weight, speed_factor):
     angle = find_direction(image)
-    try:
-        left_speed = speed_factor * (v - angle * error_weight/2)
-        right_speed = speed_factor * (v + angle * error_weight/2)
-    except:
-        print(type(angle))
+    left_speed = speed_factor * (v - angle * error_weight/2)
+    right_speed = speed_factor * (v + angle * error_weight/2)
     return (left_speed, right_speed)
