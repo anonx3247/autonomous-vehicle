@@ -102,6 +102,9 @@ def find_direction(image):
 
 def motor_speeds_from_image_direction(image,v, error_weight, speed_factor):
     angle = find_direction(image)
-    left_speed = speed_factor * (v - angle * error_weight/2)
-    right_speed = speed_factor * (v + angle * error_weight/2)
+    try:
+        left_speed = speed_factor * (v - angle * error_weight/2)
+        right_speed = speed_factor * (v + angle * error_weight/2)
+    except:
+        print(type(angle))
     return (left_speed, right_speed)
