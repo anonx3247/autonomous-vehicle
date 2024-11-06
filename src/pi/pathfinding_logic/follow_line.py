@@ -23,4 +23,4 @@ def follow_line():
         else:
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
-            set_prog_speed(arduino, left, right)
+            set_speed(arduino, left, right)
