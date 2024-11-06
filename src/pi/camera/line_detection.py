@@ -59,6 +59,7 @@ def find_centroid(image):
 
 
 def orientation_error(image,bias=0):
+    global last_error
     centroid = find_centroid(image)
     if centroid is None:
         return last_error
