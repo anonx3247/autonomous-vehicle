@@ -22,7 +22,7 @@ def corner_detection(img,a=100):
         #cv2.circle(img, (x, y),3,255,-1)
     if len(li_corners) >= expected_corners:
         detect_inter =True
-        print("Intersection !")
+        #print("Intersection !")
     #result is dilated for marking the corners, not important
     dst = cv2.dilate(dst,None)
 
