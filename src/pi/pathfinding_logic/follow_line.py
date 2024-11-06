@@ -10,7 +10,7 @@ def follow_line():
     speed = 100
     while True:
         wait(0.1)
-        image = perception()
+        image = perception(feedback=False)
         if image is None:
             print("No image")
             continue
