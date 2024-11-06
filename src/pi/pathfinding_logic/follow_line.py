@@ -8,8 +8,8 @@ arduino = connect_arduino(protection=True)
 
 def follow_line():
     speed = 70
-    L = int(input("Enter L: "))
-    R = int(input("Enter R: "))
+    L = float(input("Enter L: "))
+    R = float(input("Enter R: "))
     while True:
         image = perception(feedback=False)
         if image is None:
