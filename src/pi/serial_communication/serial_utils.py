@@ -31,7 +31,8 @@ def connect_arduino(protection=True, port_selection=True):
         arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
         wait(0.1)
         arduino.write(bytes('A', 'utf-8'))
-        wait(0.1)
+        print('Waiting for Arduino to boot...')
+        wait(2)
         value = ''
         for _ in range(3):
             arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
