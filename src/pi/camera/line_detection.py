@@ -64,8 +64,8 @@ def orientation_error(image,bias=0):
 
 def motor_speeds_from_image_centroid(image,v, L, R, max_speed=450):
     error = orientation_error(image,bias=0)
-    left_speed = (1/R)*(v - error*L/2)
-    right_speed = (1/R)*(v + error*L/2)
+    left_speed = R*(v - error*L/2)
+    right_speed = R*(v + error*L/2)
     
     # if (abs(left_speed) > max_speed):
     #     left_speed = max_speed if left_speed > 0 else -max_speed
