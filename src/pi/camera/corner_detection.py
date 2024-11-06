@@ -23,7 +23,8 @@ def corner_detection(img,a=100):
 
     dst = cv2.cornerHarris(gray,5,3,0.10)
     corners = cv2.goodFeaturesToTrack(gray, 5,0.5,20)
-    corners = np.int32(corners)
+    if corners is not None:
+        corners = np.int32(corners)
     detect_inter = False
     
     li_corners = []
@@ -33,9 +34,9 @@ def corner_detection(img,a=100):
             li_corners.append((x,y))
         print(x,y)
         #cv2.circle(img, (x, y),3,255,-1)
-    if len(li_corners) >= expected_corners:
-        inter =True
-        print("Intersection !")
+        if len(li_corners) >= expected_corners:
+            detect_inter = True
+            print("Intersection !")
     #result is dilated for marking the corners, not important
     dst = cv2.dilate(dst,None)
 
