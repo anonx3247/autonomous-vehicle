@@ -13,16 +13,12 @@ def connect_arduino(protection=True, port_selection=True):
         arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
         arduino.write(bytes('A', 'utf-8'))
         value = ''
-        for _ in range(3):
-            arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
-            value = arduino.readline().decode('utf-8').rstrip()
-            if value != '':
-                break
-            print('Disconnected from Arduino, retrying...')
+        arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+        value = arduino.readline().decode('utf-8').rstrip()
         if value != '':
             print('Connection successful')
             break
-        print('Failed to connect after 3 attempts. Please enter a new port number.')
+        print('Connection failed retry:')
     if not protection:
         set_protection(arduino, False)
     return arduino

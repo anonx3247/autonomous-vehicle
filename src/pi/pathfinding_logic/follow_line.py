@@ -11,7 +11,7 @@ def follow_line():
     error_weight = input("Enter error weight (L): ")
     speed_factor = input("Enter speed factor (1/R): ")
     speed = int(speed) if speed.isdigit() else 50
-    error_weight = float(error_weight) if error_weight.replace('.', '', 1).isdigit() else 0.5
+    error_weight = float(error_weight) if error_weight.replace('.', '', 1).isdigit() else 0.7
     speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
     while True:
         image = perception(feedback=False)
