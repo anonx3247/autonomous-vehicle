@@ -86,7 +86,9 @@ def find_direction(image):
 
     # Run linear regression on the white points
     X = white_points[:, 1].reshape(-1, 1)  # x-coordinates
+    print(X.shape)
     y = white_points[:, 0]  # y-coordinates
+    print(y.shape)
     #reg = LinearRegression().fit(X, y)
     reg = np.polyfit(X, y, 1)
 
