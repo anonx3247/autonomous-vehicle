@@ -29,7 +29,6 @@ def corner_detection(img,a=100):
     detect_inter = False
     
     li_corners = []
-    print(len(corners))
     for i in corners: 
         x, y = i.ravel()
         if abs(x-mid_x)<a:
@@ -49,4 +48,5 @@ def corner_detection(img,a=100):
     #if cv2.waitKey(0) & 0xff == 27:
     #   cv2.destroyAllWindows()
     #cv2.imwrite('out_test.png', img)
+    print(len(li_corners))
     return detect_inter,li_corners
