@@ -69,11 +69,11 @@ def motor_speeds_from_image(image,v, max_speed=450):
     error = orientation_error(image,bias=0)
     left_speed = (1/tread_length)*(v - error*error_amplitude/2)
     right_speed = (1/tread_length)*(v + error*error_amplitude/2)
-
-    if (abs(left_speed) > max_speed):
-        left_speed = max_speed if left_speed > 0 else -max_speed
-    if (abs(right_speed) > max_speed):
-        right_speed = max_speed if right_speed > 0 else -max_speed
+    
+    # if (abs(left_speed) > max_speed):
+    #     left_speed = max_speed if left_speed > 0 else -max_speed
+    # if (abs(right_speed) > max_speed):
+    #     right_speed = max_speed if right_speed > 0 else -max_speed
     print('left:', left_speed, 'right:', right_speed)
     return (left_speed,right_speed)
 
