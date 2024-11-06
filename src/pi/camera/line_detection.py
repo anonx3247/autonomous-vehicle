@@ -1,6 +1,6 @@
 from __future__ import division
 from .perception_students import width, height
-from sklearn.linear_model import LinearRegression
+#from sklearn.linear_model import LinearRegression
 
 import cv2
 import numpy as np
@@ -86,7 +86,8 @@ def find_direction(image):
     # Run linear regression on the white points
     X = white_points[:, 1].reshape(-1, 1)  # x-coordinates
     y = white_points[:, 0]  # y-coordinates
-    reg = LinearRegression().fit(X, y)
+    #reg = LinearRegression().fit(X, y)
+    reg = np.polyfit(X, y, 1)
 
     # Calculate the angle of the line with the vertical
     angle = np.arctan(reg.coef_[0]) * 180 / np.pi
