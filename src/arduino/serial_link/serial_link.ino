@@ -123,7 +123,7 @@ void init_arduino() {
   isCustomTaskOn = false;
   motorSpeedCalculationOn();
   isProgressiveAccelerationOn = false;
-  isCollisionDetectionOn = false;
+  isCollisionDetectionOn = true;
   isServoRotationOn = false;
 }
 
