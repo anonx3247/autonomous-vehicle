@@ -7,7 +7,7 @@ from camera.perception_students import show_image
 arduino = connect_arduino(protection=True)
 
 def follow_line():
-    speed = 70
+    speed = int(input("Enter speed: "))
     error_weight = float(input("Enter error weight (L): "))
     speed_factor = float(input("Enter speed factor (1/R): "))
     while True:
