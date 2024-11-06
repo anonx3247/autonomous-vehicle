@@ -231,5 +231,5 @@ class Arduino:
         self.connected = False
 
     def check_connection(self):
-        
+        ...
     
