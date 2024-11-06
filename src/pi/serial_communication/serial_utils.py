@@ -189,7 +189,7 @@ def set_protection(arduino, enabled):
 
 def obstacle_detected(arduino):
     arduino.write(bytes(commands['OBSTACLE_DETECTED'], 'utf-8'))
-    print('Checking obstacle detected...')
+    #print('Checking obstacle detected...')
     response = arduino.readline().decode('utf-8').rstrip()
     return response == 'OB'
 

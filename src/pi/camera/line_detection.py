@@ -34,7 +34,7 @@ def find_centroid(image):
 
     # Convert to HSV color space
     dilated_mask = image_to_white_points(image)
-    cv2.imshow('dilated_mask', dilated_mask)
+    #cv2.imshow('dilated_mask', dilated_mask)
 
     # Find the different contours
     contours, hierarchy = cv2.findContours(dilated_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -86,7 +86,7 @@ def motor_speeds_from_image_centroid(image,v, L, R, max_speed=450):
     #     left_speed = max_speed if left_speed > 0 else -max_speed
     # if (abs(right_speed) > max_speed):
     #     right_speed = max_speed if right_speed > 0 else -max_speed
-    print('left:', left_speed, 'right:', right_speed)
+    #print('left:', left_speed, 'right:', right_speed)
     return (left_speed,right_speed)
 
 def find_direction(image):
