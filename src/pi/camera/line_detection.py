@@ -32,10 +32,10 @@ def find_centroid(image):
     # Find the different contours
     contours, hierarchy = cv2.findContours(dilated_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # Sort by area (keep only the biggest one)
-    im2 = cv2.drawContours(image,contours,-1, (0,255,0), 3)
+    #im2 = cv2.drawContours(image,contours,-1, (0,255,0), 3)
 
 
-    print (len(contours))
+    #print (len(contours))
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:1]
 
     if len(contours) > 0:
@@ -43,12 +43,12 @@ def find_centroid(image):
         # Centroid
         cx = int(M['m10']/M['m00'])
         cy = int(M['m01']/M['m00'])
-        print("Centroid of the biggest area: ({}, {})".format(cx, cy))
-        cv2.circle(im2, (cx, cy),3,255,-1)
-        cv2.imshow('image', im2)
+        #print("Centroid of the biggest area: ({}, {})".format(cx, cy))
+        #cv2.circle(im2, (cx, cy),3,255,-1)
+        #cv2.imshow('image', im2)
         return (cx, cy)
     else:
-        print("No Centroid Found")
+        #print("No Centroid Found")
         return None
     #cv2.imwrite('out_test.png', im2)
 
