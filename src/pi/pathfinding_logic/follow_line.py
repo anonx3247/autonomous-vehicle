@@ -21,6 +21,6 @@ def follow_line():
             wait(0.5)
             reset_obstacle_detected(arduino)
         else:
-            (left, right) = motor_speeds_from_image_direction(image, speed, error_weight, speed_factor)
+            (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
             set_speed(arduino, left, right)
