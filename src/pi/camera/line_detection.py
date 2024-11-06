@@ -30,7 +30,6 @@ def image_to_white_points(image):
 def find_centroid(image):
     # Input Image
     h, w = image.shape[:2]
-    print (w,h)
 
     # Convert to HSV color space
     dilated_mask = image_to_white_points(image)

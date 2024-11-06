@@ -9,7 +9,7 @@ L=0.5
 def find_centroid(image):
     # Input Image
     h, w = image.shape[:2]
-    print (w,h)
+ 
 
     # Convert to HSV color space
 
@@ -37,7 +37,6 @@ def find_centroid(image):
     im2 = cv2.drawContours(image,contours,-1, (0,255,0), 3)
 
 
-    print (len(contours))
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:1]
 
     if len(contours) > 0:

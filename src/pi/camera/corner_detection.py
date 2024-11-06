@@ -33,7 +33,7 @@ def corner_detection(img,a=100):
         x, y = i.ravel()
         if abs(x-mid_x)<a:
             li_corners.append((x,y))
-        print(x,y)
+        #print(x,y)
         #cv2.circle(img, (x, y),3,255,-1)
     if len(li_corners) >= expected_corners:
         inter =True
