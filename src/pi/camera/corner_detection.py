@@ -3,6 +3,7 @@ import numpy as np
 from line_detection import image_to_white_points
 
 def corner_detection(img,a=100):
+    global mid_x
     dilated_mask = image_to_white_points(img)
     gray = np.float32(dilated_mask)
 
@@ -16,8 +17,7 @@ def corner_detection(img,a=100):
     li_corners = []
     for i in corners: 
         x, y = i.ravel()
-        if abs(x-mid_x)<a:
-            li_corners.append((x,y))
+        li_corners.append((x,y))
         #print(x,y)
         #cv2.circle(img, (x, y),3,255,-1)
     if len(li_corners) >= expected_corners:
