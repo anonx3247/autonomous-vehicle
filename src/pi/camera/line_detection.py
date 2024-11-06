@@ -93,7 +93,7 @@ def find_direction(image):
     reg = np.polyfit(X, y, 1)
 
     # Calculate the angle of the line with the vertical
-    angle = np.arctan(reg.coef_[0]) * 180 / np.pi
+    angle = np.arctan(reg[0]) * 180 / np.pi
     print("Angle with vertical: {:.2f} degrees".format(angle))
 
     return angle
