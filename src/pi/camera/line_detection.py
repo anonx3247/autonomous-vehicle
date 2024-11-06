@@ -4,8 +4,8 @@ from .perception_students import width, height
 import cv2
 import numpy as np
 mid_x = width // 2
-R=0.5
-L=10
+R=0.1
+L=0.2
 
 def find_centroid(image):
     # Input Image
@@ -67,8 +67,13 @@ def orientation_error(image,a):
 
 def motor_speeds_from_image(image,v):
     error = orientation_error(image,0)
-    w_l = min((1/R)*(v - abs(error)*L/2), 450) if error >= 0 else max((1/R)*(v - abs(error)*L/2), -450)
-    w_r = min((1/R)*(v + abs(error)*L/2), 450) if error >= 0 else max((1/R)*(v + abs(error)*L/2), -450)
+    w_l = (1/R)*(v - error*L/2)
+    w_r = (1/R)*(v + error*L/2)
+
+    if (abs(w_l) > 450):
+        w_l = 450 if w_l > 0 else -450
+    if (abs(w_r) > 450):
+        w_r = 450 if w_r > 0 else -450
     print('left:', w_l, 'right:', w_r)
     return (w_l,w_r)
 
