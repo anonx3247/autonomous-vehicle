@@ -17,11 +17,11 @@ def follow_line():
         if image is None:
             print("No image")
             continue
-        if obstacle_detected(arduino):
-            set_speed(arduino, 0, 0)
-            print("Obstacle detected")
-            wait(0.5)
-            reset_obstacle_detected(arduino)
+        #if obstacle_detected(arduino):
+            #set_speed(arduino, 0, 0)
+        #    print("Obstacle detected")
+        #    wait(0.5)
+        #    reset_obstacle_detected(arduino)
         else:
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)

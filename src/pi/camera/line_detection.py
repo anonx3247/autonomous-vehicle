@@ -15,7 +15,8 @@ last_left = 0
 last_right = 0
 def image_to_white_points(image):
     blur = cv2.blur(image,(5,5))
-    ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
+    threshold =  190 #168
+    ret,thresh1 = cv2.threshold(blur,threshold,255,cv2.THRESH_BINARY)
     hsv = cv2.cvtColor(thresh1, cv2.COLOR_RGB2HSV)
     lower_white = np.array([0, 0, 168])
     upper_white = np.array([172, 111, 255])
