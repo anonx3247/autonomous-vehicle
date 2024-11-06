@@ -1,24 +1,9 @@
 import cv2
 import numpy as np
-
+from line_detection import image_to_white_points
 
 def corner_detection(img,a=100):
-    mid_x = 640
-    expected_corners = 3
-    blur = cv2.blur(img,(6,6))
-    ret,thresh1 = cv2.threshold(blur,168,255,cv2.THRESH_BINARY)
-    hsv = cv2.cvtColor(thresh1, cv2.COLOR_RGB2HSV)
-
-    # Define range of white color in HSV
-    lower_white = np.array([0, 0, 168])
-    upper_white = np.array([172, 111, 255])
-    # Threshold the HSV image
-    mask = cv2.inRange(hsv, lower_white, upper_white)
-
-    kernel_erode = np.ones((6,6), np.uint8)
-    eroded_mask = cv2.erode(mask, kernel_erode, iterations=1)
-    kernel_dilate = np.ones((4,4), np.uint8)
-    dilated_mask = cv2.dilate(eroded_mask, kernel_dilate, iterations=1)
+    dilated_mask = image_to_white_points(img)
     gray = np.float32(dilated_mask)
 
     dst = cv2.cornerHarris(gray,5,3,0.10)
