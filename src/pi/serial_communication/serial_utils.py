@@ -22,22 +22,30 @@ def show_instructions():
     print('I# - set protection # (0 to disable, 1 to enable)')
     print('repeat <commands> - repeat the commands indefinitely until "s" is typed')
 
-def connect_arduino(protection=True):
+def connect_arduino(protection=True, port_selection=True):
     
     ports = get_serial_ports()
     print(ports)
     while True:
-        port = input('Enter port: ')
+        port = input('Enter port: ') if port_selection else 0
         arduino = serial.Serial(ports[int(port)], 115200, timeout=0.1)
         arduino.write(bytes('A', 'utf-8'))
         wait(0.1)
         value = ''
-        for _ in range(3):
-            arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
-            value = arduino.readline().decode('utf-8').rstrip()
+        attempts = 0
+        while True:
+            for _ in range(3):
+                arduino.write(bytes('N', 'utf-8')) # Send a command to check if connected
+                value = arduino.readline().decode('utf-8').rstrip()
+                if value != '':
+                    break
+                print('Disconnected from Arduino, retrying...')
+                wait(1)
             if value != '':
                 break
-            print('Disconnected from Arduino, retrying...')
+            attempts += 1
+            if port_selection and attempts >= 1:
+                break
             wait(1)
         if value != '':
             print('Connection successful')
