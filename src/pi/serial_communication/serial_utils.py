@@ -182,6 +182,9 @@ def set_speed(arduino, left, right=None):
         arduino.write(bytes(f'C{left} {right}', 'utf-8'))
         print(bytes(f'C{left} {right}', 'utf-8'))
 
+def set_prog_speed(arduino, left, right):
+    arduino.write(bytes(f'D{left} {right}', 'utf-8'))
+
 def set_protection(arduino, enabled):
     if enabled:
         arduino.write(bytes(commands['SET_PROTECTION'], 'utf-8'))
