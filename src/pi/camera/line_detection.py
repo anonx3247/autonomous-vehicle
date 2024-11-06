@@ -65,10 +65,10 @@ def orientation_error(image,bias=0):
         c = 0
     return c
 
-def motor_speeds_from_image(image,v, max_speed=450):
+def motor_speeds_from_image(image,v, L, R, max_speed=450):
     error = orientation_error(image,bias=0)
-    left_speed = (1/tread_length)*(v - error*error_amplitude/2)
-    right_speed = (1/tread_length)*(v + error*error_amplitude/2)
+    left_speed = (1/R)*(v - error*L/2)
+    right_speed = (1/R)*(v + error*L/2)
     
     # if (abs(left_speed) > max_speed):
     #     left_speed = max_speed if left_speed > 0 else -max_speed

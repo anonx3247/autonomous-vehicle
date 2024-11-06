@@ -7,7 +7,9 @@ from camera.perception_students import show_image
 arduino = connect_arduino(protection=True)
 
 def follow_line():
-    speed = int(input("Enter speed: "))
+    speed = 70
+    L = int(input("Enter L: "))
+    R = int(input("Enter R: "))
     while True:
         image = perception(feedback=False)
         if image is None:
@@ -19,6 +21,6 @@ def follow_line():
             wait(0.5)
             reset_obstacle_detected(arduino)
         else:
-            (left, right) = motor_speeds_from_image(image, speed)
+            (left, right) = motor_speeds_from_image(image, speed, L, R)
             left, right = floor(left, right)
             set_speed(arduino, left=left, right=right)
