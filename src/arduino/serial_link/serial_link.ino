@@ -271,7 +271,7 @@ inline void set_motor2(int nivm) {
 
 
 // routine renvoyant le message d'acquitement simple (OK ou OBstacle)
-inline void RetAcquitSimpl() {
+inline void sayObstacleDetected() {
   if (feedback == 1)
     if (obstacleDetected == false) Serial.println("OK");
     else Serial.println("OB");
@@ -289,7 +289,7 @@ void CONNECT_code() {
   else communicationMode = 0;
   init_arduino();
 
-  RetAcquitSimpl();
+  sayObstacleDetected();
   if (feedback == 2) {
     sprintf(retstring, "OK Arduino connecte version 1.0 en mode %d", communicationMode);
     Serial.println(retstring);
@@ -310,7 +310,7 @@ void RESETENC_code() {
   GetLong(0);
   CountIncr1 = 0;
   CountIncr2 = 0;
-  RetAcquitSimpl();  // acquitement de la commande en mode feedback=1
+  sayObstacleDetected();  // acquitement de la commande en mode feedback=1
   if (feedback == 2)
     Serial.println("Ok encodeurs de position remis à 0");
 }
@@ -336,7 +336,7 @@ void SINGLEMOTOR_code() {
     GetInt(0);
     GetLong(0);
     set_motor(motA, motB, s, mVoltage);  // envoie la commande au moteur
-    RetAcquitSimpl();                // acquitement de la commande en mode feedback=1
+    sayObstacleDetected();                // acquitement de la commande en mode feedback=1
     if (feedback == 2)
       if (obstacleDetected == false) {
         sprintf(retstring, "OK Moteur %c mis à la tension : %d", m, mVoltage);
@@ -365,7 +365,7 @@ void DUALMOTOR_code() {
   if ((m1Voltage == 1) && (m2Voltage == 0)) isProgressiveAccelerationOn = false;
 
   //reponse de la commande
-  RetAcquitSimpl();
+  sayObstacleDetected();
   if (feedback == 2)
     if (obstacleDetected == false) {
       sprintf(retstring, "OK Moteurs mis aux tensions : %d %d", m1Voltage, m2Voltage);
@@ -390,7 +390,7 @@ void DUALMOTORSLOW_code() {
     progressiveAccelerationOn();
 
   // réponse de la commande
-  RetAcquitSimpl();
+  sayObstacleDetected();
   if (feedback == 2)
     if (obstacleDetected == false) {
       sprintf(retstring, "OK Moteurs démarrage progressif : %d %d %d", echelon1Voltage, echelon2Voltage, startSpeed);
@@ -414,7 +414,7 @@ void SERVO_code() {
   frontServo.write(servoPosition);
 
   // on renvoie la réponse
-  RetAcquitSimpl();
+  sayObstacleDetected();
   if (feedback == 2) {
     sprintf(retstring, "OK servomoteur en %d", servoPosition);
     Serial.println(retstring);
@@ -433,7 +433,7 @@ void SERVO_minmax() {
   if (servoMax > 270) servoMax = 270;
 
   // on renvoie la réponse
-  RetAcquitSimpl();
+  sayObstacleDetected();
   if (feedback == 2) {
     sprintf(retstring, "servomoteur min max = %d %d", servoMin, servoMax);
     Serial.println(retstring);
@@ -485,14 +485,13 @@ void OBSTACLE_DETECTED() {
   if (communicationMode == 2) {
     write_i16(1);
   } else {
-    if (obstacleDetected) Serial.println("OB");
-    else Serial.println("OK");
+    sayObstacleDetected();
   }
 }
 
 void RESET_OBSTACLE_DETECTED() {
   obstacleDetected = false;
-  RetAcquitSimpl();
+  // sayObstacleDetected();
 }
 
 
