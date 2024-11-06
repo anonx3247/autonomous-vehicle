@@ -47,12 +47,3 @@ def corner_detection(img,a=100):
     #   cv2.destroyAllWindows()
     #cv2.imwrite('out_test.png', img)
     return detect_inter,li_corners
-
-
-detect_inter,li_corners = corner_detection(image)
-if detect_inter:
-    cas_inter = True
-if cas_inter:
-    if not detect_inter:
-        cas_inter = False
-        stop()
