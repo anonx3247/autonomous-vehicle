@@ -7,7 +7,7 @@ from camera.perception_students import show_image
 arduino = connect_arduino(protection=True)
 
 def follow_line():
-    speed = 70
+    speed = 30
     while True:
         image = perception(feedback=False)
         if image is None:
