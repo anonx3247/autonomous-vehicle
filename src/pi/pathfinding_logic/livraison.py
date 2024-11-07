@@ -5,10 +5,11 @@ from pathfinding_logic.pathfinder import Pathfinder
 pathfinder = Pathfinder()
 
 addresses = [12, 24, 0]
-address = next(addresses)
+idx = 0
+address = addresses[idx]
 
 def callback(arduino):
-    global pathfinder       
+    global pathfinder, idx, address, addresses  
     rotation = pathfinder.decision(address)
     print('rotation',   rotation)
     if type(rotation) == str:
@@ -17,7 +18,8 @@ def callback(arduino):
                 exit()
             wait(2)
             pathfinder.position = address
-            address = next(addresses)
+            idx += 1
+            address = addresses[idx]
         print(rotation)
         
     elif rotation != 0:
