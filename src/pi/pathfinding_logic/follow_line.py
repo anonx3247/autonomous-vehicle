@@ -22,6 +22,8 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     if on_intersection_callback is not None:
         on_intersection_callback(arduino) #first turn decision
     while True:
+        if arduino.get_motor_speed()[0] < 0 and arduino.get_motor_speed()[1] < 0 :
+            print('NEGATIVE')
         image = perception(feedback=False)
         if image is None:
             print("No image")

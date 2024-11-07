@@ -254,6 +254,13 @@ class Arduino:
         except:
             return self.last_enc
 
+    def get_motor_speed(self):
+        self.write(commands['GET_MOTOR_VOLTAGES'])
+        val = self.read()
+        try:
+            return [int(x) for x in val.split(' ')]
+        except:
+            return [0, 0]
 
     def set_speed(self, left=None, right=None):
         if left is None:
@@ -284,7 +291,6 @@ class Arduino:
     def turn_degrees(self, degrees, speed=None, right_angle_factor=250):
         if speed is None:
             speed = self.base_speed * 1.5
-            print(speed)
         enc = self.get_encoders()
         self.set_speed(speed * sign(degrees), -speed * sign(degrees))
         val = right_angle_factor / 90 * abs(degrees)
