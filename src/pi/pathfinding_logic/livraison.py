@@ -36,7 +36,6 @@ def callback(arduino, image):
 def obstacle_line():
     global pathfinder, address
     pathfinder.orientation = (pathfinder.orientation - 2) % 4
-    print(pathfinder.prev, pathfinder.pos)
     pathfinder.enleve(pathfinder.prev, pathfinder.pos)
     pathfinder.pos = pathfinder.prev
     pathfinder.djikstra(pathfinder.pos, address)
