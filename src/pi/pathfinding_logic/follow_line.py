@@ -37,7 +37,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             if detections >= 3:
                 intersection_detected = True
                 detections = 0
-        if intersection_detected:
+        elif intersection_detected:
             arduino.set_speed(0, 0)
             if on_obstacle_intersection is not None and arduino.obstacle_detected():
                 print('obstacle int')
