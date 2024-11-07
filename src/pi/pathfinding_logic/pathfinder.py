@@ -101,15 +101,14 @@ class Pathfinder(object):
         
         position_suivante = path[1]
         self.prev_orientation = self.orientation
-        match (position_suivante - self.pos):
-            case 1:    
-                self.orientation = 1
-            case -1:
-                self.orientation = 3
-            case 5:
-                self.orientation = 2
-            case -5:
-                self.orientation = 0
+        if (position_suivante - self.pos) == 1: 
+            self.orientation = 1
+        elif (position_suivante - self.pos) == -1:
+            self.orientation = 3
+        elif (position_suivante - self.pos) == 5:
+            self.orientation = 2
+        elif (position_suivante - self.pos) == -5:
+            self.orientation = 0
         self.pos = position_suivante
         return ((90 * (self.orientation - self.prev_orientation) + 180 ) % 360 - 180)
 
