@@ -23,6 +23,7 @@ def connect_arduino(protection=True, port_selection=True):
         set_protection(arduino, False)
     return arduino
 
+
 def get_serial_ports():
     """
     Lists serial ports.
@@ -197,8 +198,16 @@ def reset_obstacle_detected(arduino):
     arduino.write(bytes(commands['RESET_OBSTACLE_DETECTED'], 'utf-8'))
 
 class Arduino:
-    def __init__(self, port, baudrate=115200, timeout=0.1, attempt_connection=True):
-        self.arduino = serial.Serial(port, baudrate, timeout=timeout)
+    def __init__(self, port=None, baudrate=115200, timeout=0.1, attempt_connection=True):
+        if port is None:
+            while True: 
+                ports = get_serial_ports()
+                port = input('Enter port: ')
+                self.arduino = serial.Serial(ports[int(port)], baudrate, timeout=timeout)
+                self.write(commands['CONNECT'])
+                if self.check_connection():
+                    break
+                print('Connection failed, retry...')
         self.connected = False
         if attempt_connection:
             self.connect()
@@ -208,6 +217,7 @@ class Arduino:
         self.write(commands['CONNECT'])
         while not self.connected:
             self.check_connection()
+            print('Not connected, retry...')
             wait(0.1)
 
     def check_connection(self):
