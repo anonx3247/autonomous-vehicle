@@ -201,6 +201,7 @@ class Arduino:
     def __init__(self, port=None, baudrate=115200, timeout=0.1, attempt_connection=True):
         if port is None:
             while True: 
+                print(get_serial_ports())
                 ports = get_serial_ports()
                 port = input('Enter port: ')
                 self.arduino = serial.Serial(ports[int(port)], baudrate, timeout=timeout)
@@ -224,7 +225,7 @@ class Arduino:
         self.write(commands['GET_ENCODERS'])
         value = self.read()
         self.connected = value != ''
-
+        return self.connected
     def read(self):
         return self.arduino.readline().decode('utf-8').rstrip()
     
