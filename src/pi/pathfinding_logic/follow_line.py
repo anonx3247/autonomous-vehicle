@@ -52,8 +52,8 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             print("Obstacle detected")
             still_there = True
             for _ in range(3):
-                wait(0.5)
                 arduino.reset_obstacle_detected()
+                wait(0.5)
                 if not arduino.obstacle_detected():
                     still_there = False
                     break
