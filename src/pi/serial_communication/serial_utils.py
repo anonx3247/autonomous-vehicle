@@ -278,6 +278,7 @@ class Arduino:
     def turn_degrees(self, degrees, speed=None, right_angle_factor=270):
         if speed is None:
             speed = self.base_speed * 2
+            print(speed)
         enc = self.get_encoders()
         self.set_speed(speed * sign(degrees), -speed * sign(degrees))
         val = right_angle_factor / 90 * abs(degrees)
