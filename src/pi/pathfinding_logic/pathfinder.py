@@ -109,7 +109,7 @@ class Pathfinder(object):
         else : return angle of rotation necessary to reach the objective
         
         """
-        if self.pos == self.obj:
+        if self.pos == objectif:
             return 'arrived'
         if objectif != self.obj:
             self.obj = objectif
