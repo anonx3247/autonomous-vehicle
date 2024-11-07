@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 from .line_detection import image_to_white_points
 
-def corner_detection(img, quality=0.99, a=100):
-    expected_corners = 3
+def corner_detection(img, quality=0.99, a=100, seuil=4):
+    expected_corners = seuil
     dilated_mask = image_to_white_points(img)
     gray = np.float32(dilated_mask)
 
@@ -19,7 +19,7 @@ def corner_detection(img, quality=0.99, a=100):
         x, y = i.ravel()
         li_corners.append((x,y))
         #print(x,y)
-        cv2.circle(img, (x, y),3,255,-1)
+        cv2.circle(gray, (x, y),3,255,-1)
     if len(li_corners) >= expected_corners:
         detect_inter =True
         #print("Intersection !")
@@ -29,7 +29,7 @@ def corner_detection(img, quality=0.99, a=100):
     # Threshold for an optimal value, it may vary depending on the image.
     #gray[dst>0.1*dst.max()]=[0,0,255]
 
-    cv2.imshow('dst',img)
+    cv2.imshow('dst',gray)
     if cv2.waitKey(0) & 0xff == 27:
        cv2.destroyAllWindows()
     #cv2.imwrite('out_test.png', img)
