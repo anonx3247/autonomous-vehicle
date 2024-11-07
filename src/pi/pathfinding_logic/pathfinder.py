@@ -113,7 +113,7 @@ class Pathfinder(object):
             self.obj = objectif
         if self.pos == self.obj:
             return 'arrived'
-        if objectif != self.objectif:
+        if objectif != self.obj:
             res = self.djikstra(self.pos, objectif)
             if type(res) == str:
                 print('impossible')
