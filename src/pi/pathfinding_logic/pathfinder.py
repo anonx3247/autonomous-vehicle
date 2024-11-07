@@ -108,7 +108,7 @@ class Pathfinder(object):
         path = path[::-1]
         if distances[self.obj] == np.inf:
             return 'impossible'
-        
+        print('path:', path)
         position_suivante = path[1]
         self.prev_orientation = self.orientation
         if (position_suivante - self.pos) == 1: 
