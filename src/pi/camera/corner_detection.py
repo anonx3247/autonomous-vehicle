@@ -2,8 +2,7 @@ import cv2
 import numpy as np
 from .line_detection import image_to_white_points
 
-def corner_detection(img, quality=0.99, a=100, seuil=4):
-    expected_corners = seuil
+def corner_detection(img, quality=0.99, a=100, expected_corners=4):
     dilated_mask = image_to_white_points(img)
     gray = np.float32(dilated_mask)
 
