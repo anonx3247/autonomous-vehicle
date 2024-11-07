@@ -101,7 +101,7 @@ class Pathfinder(object):
         
         position_suivante = path[1]
         self.prev_orientation = self.orientation
-        match position_suivante - self.pos:
+        match (position_suivante - self.pos):
             case 1:    
                 self.orientation = 1
             case -1:
