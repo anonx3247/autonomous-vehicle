@@ -57,6 +57,14 @@ class Pathfinder(object):
     def objectif(self, objectif):
         self.obj = objectif
 
+    def __get_direction__(self, start, end):
+        if abs(start - end) == 1:
+            return 'horizontal'
+        elif abs(start - end) == 5:
+            return 'vertical'
+        return None
+
+
     def decision(self, objectif = -1):
         """
         return -1 if impossible
@@ -73,10 +81,10 @@ class Pathfinder(object):
         distances[self.pos] = 0  # Distance de départ à lui-même est 0
         previous_nodes = np.full(n, -1)  # Tableau pour garder la trace des chemins
         visited = np.zeros(n, dtype=bool)  # Tableau pour garder trace des nœuds visités
-        priority_queue = [(0, self.pos)]  # File de priorité (distance, nœud)
+        priority_queue = [(0, self.pos, None)]  # File de priorité (distance, nœud)
 
         while priority_queue:
-            current_distance, current_node = heapq.heappop(priority_queue)
+            current_distance, current_node, last_direction = heapq.heappop(priority_queue)
             if current_node == self.obj:
                 break
             if visited[current_node]:
@@ -85,11 +93,13 @@ class Pathfinder(object):
             for neighbor in range(n):
                 edge_weight = self.mat[current_node, neighbor]
                 if edge_weight > 0 and not visited[neighbor]:
-                    new_distance = current_distance + edge_weight
+                    new_direction = self.__get_direction__(current_node, neighbor)
+                    rotation_penalty = 0 if new_direction == last_direction else 0.5
+                    new_distance = current_distance + edge_weight + rotation_penalty
                     if new_distance < distances[neighbor]:
                         distances[neighbor] = new_distance
                         previous_nodes[neighbor] = current_node
-                        heapq.heappush(priority_queue, (new_distance, neighbor))
+                        heapq.heappush(priority_queue, (new_distance, neighbor, new_direction))
         path = []
         current = self.obj
         while current != -1:
