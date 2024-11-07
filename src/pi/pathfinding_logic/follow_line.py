@@ -39,6 +39,10 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 detections = 0
         if intersection_detected:
             arduino.set_speed(0, 0)
+            if on_obstacle_intersection is not None and arduino.obstacle_detected():
+                print('obstacle int')
+                on_obstacle_intersection(arduino, image)
+            intersection_detected = False
             wait(1)
             if on_intersection_callback is not None:
                 on_intersection_callback(arduino, image)
@@ -52,16 +56,10 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 if not arduino.obstacle_detected():
                     break
             else:
-                if intersection_detected:
-                    if on_obstacle_intersection is not None:
-                        print('obstacle int')
-                        on_obstacle_intersection(arduino, image)
-                else:
-                    if on_obstacle_line is not None:
-                        arduino.turn_degrees(190)
-                        print('obstacle line')
-                        on_obstacle_line()
-
+                if on_obstacle_line is not None:
+                    arduino.turn_degrees(190)
+                    print('obstacle line')
+                    on_obstacle_line()
 
             #arduino.turn_degrees(180)
             #wait(0.5)
@@ -70,4 +68,3 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
             arduino.set_speed(left, right)
-        intersection_detected = False
