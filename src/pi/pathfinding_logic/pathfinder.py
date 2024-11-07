@@ -121,7 +121,7 @@ class Pathfinder(object):
         if (position_suivante - self.pos) == 1: 
             self.orientation = 1
         elif (position_suivante - self.pos) == -1:
-            self.orientation = -1
+            self.orientation = 3
         elif (position_suivante - self.pos) == 5:
             self.orientation = 2
         elif (position_suivante - self.pos) == -5:
@@ -129,7 +129,12 @@ class Pathfinder(object):
         self.pos = position_suivante
         print('prev:', self.prev_orientation, 'ori:', self.orientation, 'pos:', self.pos)
 
-        return 90 * ((self.orientation - self.prev_orientation) % 4 -1)
+        def conv(deg):
+            if deg > 180:
+                deg = -(deg - 180)
+            return deg
+
+        return conv(90 * (self.orientation - self.prev_orientation))
 
     def aucune_sortie(self):
         self.enleve(self.pos, self.prev)
