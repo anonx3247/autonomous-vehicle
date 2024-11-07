@@ -24,7 +24,7 @@ def follow_line(expected_corners=4):
             continue
         detected, _ = corner_detection(image, quality=quality, expected_corners=expected_corners)
         if detected:
-            print("Intersection detected")
+            print("Intersection detected", detections)
             detections += 1
             if detections >= 3:
                 intersection_detected = True
