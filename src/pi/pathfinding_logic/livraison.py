@@ -9,11 +9,11 @@ def callback(arduino):
     global pathfinder       
     rotation = pathfinder.decision(address)
     print('rotation',   rotation)
-    if rotation is str:
+    if type(rotation) == str:
         print(rotation)
         exit()
     elif rotation != 0:
-        arduino.turn_degrees(-rotation)
+        arduino.turn_degrees(-rotation, right_angle_factor=200)
     wait(0.5)
 
 def main():
