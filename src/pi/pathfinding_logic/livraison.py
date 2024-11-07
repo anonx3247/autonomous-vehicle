@@ -12,7 +12,7 @@ def callback(arduino):
     if rotation is str:
         print(rotation)
         exit()
-    if rotation != 0:
+    elif rotation != 0:
         arduino.turn_degrees(rotation)
     wait(0.5)
 
