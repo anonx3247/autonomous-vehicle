@@ -256,9 +256,9 @@ class Arduino:
             wait(0.1)
         self.set_speed(0, 0)
     
-    def turn_degrees(self, degrees, speed, right_angle_factor=315):
-        self.set_speed(speed * sign(degrees), -speed * sign(degrees))
+    def turn_degrees(self, degrees, speed, right_angle_factor=310):
         enc = self.get_encoders()
+        self.set_speed(speed * sign(degrees), -speed * sign(degrees))
         val = right_angle_factor / 90 * abs(degrees)
         while abs(enc[0] - self.get_encoders()[0]) < val:
             print(self.get_encoders()[0])
