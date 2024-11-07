@@ -129,7 +129,7 @@ class Pathfinder(object):
         self.pos = position_suivante
         print('prev:', self.prev_orientation, 'ori:', self.orientation, 'pos:', self.pos)
 
-        return 90 * (self.orientation - self.prev_orientation)
+        return 90 * ((self.orientation - self.prev_orientation) % 4 -1)
 
     def aucune_sortie(self):
         self.enleve(self.pos, self.prev)
