@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 from .line_detection import image_to_white_points
 
-def corner_detection(img,a=100):
+def corner_detection(img, quality=0.99, a=100):
     expected_corners = 3
     dilated_mask = image_to_white_points(img)
     gray = np.float32(dilated_mask)
 
     dst = cv2.cornerHarris(gray,7,3,0.15)
-    corners = cv2.goodFeaturesToTrack(gray, 5,0.8,20)
+    corners = cv2.goodFeaturesToTrack(gray, 5,quality,20)
     if corners is None:
         return False, []
     corners = np.int32(corners)

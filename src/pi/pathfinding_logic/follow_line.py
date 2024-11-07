@@ -11,15 +11,17 @@ def follow_line():
     speed = input("Enter speed: ")
     error_weight = input("Enter error weight (L): ")
     speed_factor = input("Enter speed factor (1/R): ")
+    quality = input("Enter quality (0-1): ")
     speed = int(speed) if speed.isdigit() else 50
     error_weight = float(error_weight) if error_weight.replace('.', '', 1).isdigit() else 0.7
     speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
+    quality = float(quality) if quality.replace('.', '', 1).isdigit() else 0.99
     while True:
         image = perception(feedback=False)
         if image is None:
             print("No image")
             continue
-        detected, _ = corner_detection(image)
+        detected, _ = corner_detection(image, quality=quality)
         if detected:
             print("Intersection detected")
             intersection_detected += 1
