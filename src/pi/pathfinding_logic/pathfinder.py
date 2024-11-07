@@ -1,7 +1,7 @@
 import numpy as np
 import heapq
-import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch
+#import matplotlib.pyplot as plt
+#from matplotlib.patches import FancyArrowPatch
 
 
 class Pathfinder(object):
@@ -123,6 +123,7 @@ class Pathfinder(object):
         self.pos = self.prev
         return self.decision()
     
+    """ 
     def grid(self):
         # Fonction pour dessiner la grille avec la position et orientation du robot
         fig, ax = plt.subplots(figsize=(6, 6))
@@ -176,5 +177,5 @@ class Pathfinder(object):
         # Enregistrer l'image dans un fichier
         plt.savefig("grille_5x5_chemin.png", bbox_inches='tight')
         plt.close()  # Fermer la figure pour éviter de l'afficher
-
+    """
     
