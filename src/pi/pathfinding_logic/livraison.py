@@ -3,15 +3,23 @@ from utils import wait
 from pathfinding_logic.follow_line import follow_line
 from pathfinding_logic.pathfinder import Pathfinder
 pathfinder = Pathfinder()
-address = int(input('address:'))
+
+addresses = [12, 24, 0]
+address = next(addresses)
 
 def callback(arduino):
     global pathfinder       
     rotation = pathfinder.decision(address)
     print('rotation',   rotation)
     if type(rotation) == str:
+        if rotation == 'arrived':
+            if address == addresses[-1]:
+                exit()
+            wait(2)
+            pathfinder.position = address
+            address = next(addresses)
         print(rotation)
-        exit()
+        
     elif rotation != 0:
         arduino.turn_degrees(-rotation, right_angle_factor=150)
     wait(0.5)
