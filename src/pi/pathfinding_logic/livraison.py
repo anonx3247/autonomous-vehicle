@@ -8,6 +8,7 @@ address = int(input('address:'))
 def callback(arduino):
     global pathfinder       
     rotation = pathfinder.decision(address)
+    wait(0.7)
     print('rotation',   rotation)
     if type(rotation) == str:
         print(rotation)
