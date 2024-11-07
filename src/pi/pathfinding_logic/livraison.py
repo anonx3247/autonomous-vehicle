@@ -1,7 +1,7 @@
 from serial_communication.serial_utils import Arduino
 from utils import wait
 from pathfinding_logic.follow_line import follow_line
-from pi.pathfinding_logic.pathfinder import Pathfinder
+from pathfinding_logic.pathfinder import Pathfinder
 pathfinder = Pathfinder()
 address = 6
 pathfinder.direction(address)
