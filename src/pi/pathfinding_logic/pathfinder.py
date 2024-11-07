@@ -132,6 +132,9 @@ class Pathfinder(object):
         def conv(deg):
             if deg > 180:
                 deg = -(deg - 180)
+
+            if deg == 180 or deg == -180:
+                return 190
             return deg
 
         return conv(90 * (self.orientation - self.prev_orientation))
