@@ -5,7 +5,7 @@ from pathfinding_logic.pathfinder import Pathfinder
 from camera.line_detection import find_centroid
 pathfinder = Pathfinder()
 
-addresses = [11, 18, 0]
+addresses = [11, 0]
 idx = 0
 address = addresses[idx]
 
