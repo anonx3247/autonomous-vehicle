@@ -4,11 +4,10 @@ from pathfinding_logic.follow_line import follow_line
 from pathfinding_logic.pathfinder import Pathfinder
 pathfinder = Pathfinder()
 address = 6
-pathfinder.direction(address)
 
 def callback(arduino):
     global pathfinder       
-    rotation = pathfinder.decision()
+    rotation = pathfinder.decision(address)
     arduino.turn_degrees(rotation)
     wait(0.5)
 
