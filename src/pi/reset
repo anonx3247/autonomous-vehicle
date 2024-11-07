@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-from serial_communication.serial_utils import connect_arduino
+from serial_communication.serial_utils import get_serial_ports
+import serial
 from utils import wait
 
-arduino = connect_arduino(protection=True, port_selection=False)
-wait(1)
-arduino.write(b'a')
+arduino = serial.Serial(get_serial_ports()[0])
 
