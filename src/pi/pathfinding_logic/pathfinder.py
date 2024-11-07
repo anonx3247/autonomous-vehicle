@@ -142,7 +142,7 @@ class Pathfinder(object):
 
     def enleve_arrete_en_face(self):
         self.enleve(self.pos, self.prev)
-        self.djikstra(self.obj)
+        self.djikstra(self.prev, self.obj)
     
     def route_barree(self):
         self.orientation = (self.orientation + 2) %2 #on se retourne
