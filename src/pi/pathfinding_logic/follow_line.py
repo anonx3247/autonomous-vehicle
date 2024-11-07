@@ -3,7 +3,7 @@ from camera.perception_students import perception
 from camera.line_detection import motor_speeds_from_image_direction, motor_speeds_from_image_centroid
 from utils import wait, floor
 from camera.perception_students import show_image
-from camera.corner_detection import corner_detection
+from camera.corner_detection import detect_intersection
 
 arduino = connect_arduino(protection=True)
 def follow_line(expected_corners=4):
@@ -12,17 +12,17 @@ def follow_line(expected_corners=4):
     speed = input("Enter speed: ")
     error_weight = input("Enter error weight (L): ")
     speed_factor = input("Enter speed factor (1/R): ")
-    quality = input("Enter quality (0-1): ")
+    width_threshold = input("Enter width threshold (0-1): ")
     speed = int(speed) if speed.isdigit() else 50
     error_weight = float(error_weight) if error_weight.replace('.', '', 1).isdigit() else 0.7
     speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
-    quality = float(quality) if quality.replace('.', '', 1).isdigit() else 0.99
+    width_threshold = float(width_threshold) if width_threshold.replace('.', '', 1).isdigit() else 0.5
     while True:
         image = perception(feedback=False)
         if image is None:
             print("No image")
             continue
-        detected, _ = corner_detection(image, quality=quality, expected_corners=expected_corners)
+        detected = detect_intersection(image, width_threshold=width_threshold, expected_corners=expected_corners)
         if detected:
             print("Intersection detected", detections)
             detections += 1
