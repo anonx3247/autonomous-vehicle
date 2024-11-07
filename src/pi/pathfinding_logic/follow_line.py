@@ -54,10 +54,12 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             else:
                 if intersection_detected:
                     if on_obstacle_intersection is not None:
+                        print('obstacle int')
                         on_obstacle_intersection(arduino, image)
                 else:
                     if on_obstacle_line is not None:
                         arduino.turn_degrees(190)
+                        print('obstacle line')
                         on_obstacle_line()
 
 

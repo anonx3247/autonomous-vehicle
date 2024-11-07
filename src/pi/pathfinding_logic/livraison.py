@@ -29,6 +29,7 @@ def callback(arduino, image):
     wait(0.5)
     c = find_centroid(image)
     if c is None:
+        print('enlevement d\'arrete')
         pathfinder.enleve_arrete_en_face()
         callback(arduino, image)
 
