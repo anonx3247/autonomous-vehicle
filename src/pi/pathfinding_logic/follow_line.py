@@ -19,6 +19,8 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
         error_weight = float(error_weight) if error_weight.replace('.', '', 1).isdigit() else 0.7
         speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
         width_threshold = float(width_threshold) if width_threshold.replace('.', '', 1).isdigit() else 0.5
+    if on_intersection_callback is not None:
+        on_intersection_callback(arduino) #first turn decision
     while True:
         image = perception(feedback=False)
         if image is None:
