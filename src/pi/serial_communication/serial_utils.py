@@ -198,7 +198,8 @@ def reset_obstacle_detected(arduino):
     arduino.write(bytes(commands['RESET_OBSTACLE_DETECTED'], 'utf-8'))
 
 class Arduino:
-    def __init__(self, port=None, baudrate=115200, timeout=0.1, attempt_connection=True):
+    def __init__(self, port=None, baudrate=115200, timeout=0.1, attempt_connection=True, base_speed=500):
+        self.base_speed = base_speed
         if port is None:
             while True: 
                 print(get_serial_ports())
@@ -248,7 +249,9 @@ class Arduino:
         val = self.read()
         return [int(x) for x in val.split(' ')]
 
-    def set_speed(self, left, right=None):
+    def set_speed(self, left=None, right=None):
+        if left is None:
+            left = self.base_speed
         if right is None:
             self.write(f'C{left}')
         else:
@@ -260,7 +263,11 @@ class Arduino:
         else:
             self.write(commands['DISABLE_PROTECTION'])
 
-    def advance_for(self, val, left, right):
+    def advance_for(self, val, left=None, right=None):
+        if left is None:
+            left = self.base_speed
+        if right is None:
+            right = self.base_speed
         self.set_speed(left, right)
         enc = self.get_encoders()
         while abs(enc[0] - self.get_encoders()[0]) < val and abs(enc[1] - self.get_encoders()[1]) < val:
@@ -268,7 +275,9 @@ class Arduino:
             wait(0.1)
         self.set_speed(0, 0)
     
-    def turn_degrees(self, degrees, speed, right_angle_factor=310):
+    def turn_degrees(self, degrees, speed=None, right_angle_factor=270):
+        if speed is None:
+            speed = self.base_speed * 2
         enc = self.get_encoders()
         self.set_speed(speed * sign(degrees), -speed * sign(degrees))
         val = right_angle_factor / 90 * abs(degrees)

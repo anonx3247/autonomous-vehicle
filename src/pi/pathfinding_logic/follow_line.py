@@ -44,6 +44,7 @@ def follow_line(use_default_parameters=True, expected_corners=4):
             arduino.set_speed(0, 0)
             print("Obstacle detected")
             wait(0.5)
+            arduino.turn_degrees(180)
             arduino.reset_obstacle_detected()
         else:
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
