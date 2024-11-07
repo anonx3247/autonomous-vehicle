@@ -54,6 +54,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             for _ in range(3):
                 arduino.reset_obstacle_detected()
                 wait(0.5)
+                print('hi')
                 if not arduino.obstacle_detected():
                     still_there = False
                     break
