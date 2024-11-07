@@ -8,6 +8,7 @@ address = 6
 def callback(arduino):
     global pathfinder       
     rotation = pathfinder.decision(address)
+    print(rotation)
     arduino.turn_degrees(rotation)
     wait(0.5)
 
