@@ -21,7 +21,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
         speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
         width_threshold = float(width_threshold) if width_threshold.replace('.', '', 1).isdigit() else 0.5
     if on_intersection_callback is not None:
-        on_intersection_callback(arduino, image) #first turn decision
+        on_intersection_callback(arduino) #first turn decision
     while True:
         image = perception(feedback=False)
         if iters_since_no_line > 10:
@@ -42,10 +42,10 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             intersection_detected = False
             wait(1)
             if on_intersection_callback is not None:
-                on_intersection_callback(arduino, image)
+                on_intersection_callback(arduino)
             if on_obstacle_intersection is not None and arduino.obstacle_detected():
                 print('obstacle int')
-                on_obstacle_intersection(arduino, image)
+                on_obstacle_intersection(arduino)
             continue
         if arduino.obstacle_detected():
             arduino.set_speed(0, 0)

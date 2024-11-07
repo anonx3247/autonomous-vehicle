@@ -3,13 +3,14 @@ from utils import wait
 from pathfinding_logic.follow_line import follow_line
 from pathfinding_logic.pathfinder import Pathfinder
 from camera.line_detection import find_centroid
+from camera.perception_students import perception
 pathfinder = Pathfinder()
 
 addresses = [11, 0]
 idx = 0
 address = addresses[idx]
 
-def callback(arduino, image):
+def callback(arduino):
     global pathfinder, idx, address, addresses  
     rotation = pathfinder.decision(address)
         
@@ -22,16 +23,17 @@ def callback(arduino, image):
             pathfinder.pos = address
             idx += 1
             address = addresses[idx]
-            callback(arduino, image)
+            callback(arduino)
         
     elif rotation != 0:
         arduino.turn_degrees(-rotation, right_angle_factor=150)
     wait(0.5)
+    image = perception(feedback=False)
     c = find_centroid(image)
     if c is None:
         print('enlevement d\'arrete')
         pathfinder.enleve_arrete_en_face()
-        callback(arduino, image)
+        callback(arduino)
 
 def obstacle_line():
     global pathfinder, address
@@ -42,12 +44,12 @@ def obstacle_line():
     
     
 
-def obstacle_int(arduino, image):
+def obstacle_int(arduino):
     global pathfinder, address
     pathfinder.enleve_arrete_en_face()
     pathfinder.pos = pathfinder.prev
     pathfinder.djikstra(pathfinder.pos, address)
-    callback(arduino, image)
+    callback(arduino)
 
 def main():
     follow_line(width_threshold=0.3, on_intersection_callback=callback, on_obstacle_line=obstacle_line, on_obstacle_intersection=obstacle_int)
