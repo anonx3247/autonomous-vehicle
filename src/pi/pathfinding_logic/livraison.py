@@ -2,15 +2,17 @@ from serial_communication.serial_utils import Arduino
 from utils import wait
 from pathfinding_logic.follow_line import follow_line
 from pathfinding_logic.pathfinder import Pathfinder
+from camera.line_detection import find_centroid
 pathfinder = Pathfinder()
 
 addresses = [11, 18, 0]
 idx = 0
 address = addresses[idx]
 
-def callback(arduino):
+def callback(arduino, image):
     global pathfinder, idx, address, addresses  
     rotation = pathfinder.decision(address)
+        
     print('rotation',   rotation)
     if type(rotation) == str:
         if rotation == 'arrived':
@@ -20,14 +22,34 @@ def callback(arduino):
             pathfinder.pos = address
             idx += 1
             address = addresses[idx]
-            callback(arduino)
+            callback(arduino, image)
         
     elif rotation != 0:
         arduino.turn_degrees(-rotation, right_angle_factor=150)
     wait(0.5)
+    c = find_centroid(image)
+    if c is None:
+        pathfinder.enleve_arrete_en_face()
+        callback(arduino, image)
+
+def obstacle_line():
+    global pathfinder, address
+    pathfinder.orientation = (pathfinder.orientation - 2) % 4
+    pathfinder.enleve(pathfinder.prev, pathfinder.pos)
+    pathfinder.pos = pathfinder.prev
+    pathfinder.djikstra(pathfinder.pos, address)
+    
+    
+
+def obstacle_int(arduino, image):
+    global pathfinder, address
+    pathfinder.enleve_arrete_en_face()
+    pathfinder.pos = pathfinder.prev
+    pathfinder.djikstra(pathfinder.pos, address)
+    callback(arduino, image)
 
 def main():
-    follow_line(width_threshold=0.3, on_intersection_callback=callback)
+    follow_line(width_threshold=0.3, on_intersection_callback=callback, on_obstacle_line=obstacle_line, on_obstacle_intersection=obstacle_int)
 
 if __name__ == "__main__":
     main()

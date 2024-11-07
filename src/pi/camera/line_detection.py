@@ -10,6 +10,7 @@ error_amplitude = 3
 lefts = []
 rights = []
 errors = []
+iters_since_no_line = 0
 # L = 0.5, R = 2, V = 50
 
 last_error = 0
@@ -60,10 +61,13 @@ def find_centroid(image):
 
 
 def orientation_error(image,bias=0):
-    global last_error
+    global last_error, iters_since_no_line
     centroid = find_centroid(image)
     if centroid is None:
+        iters_since_no_line += 1        
         return last_error
+    else:
+        iters_since_no_line = 0
     c = (centroid[0]-mid_x)
     if abs(c) - bias <= 0:
         c = 0

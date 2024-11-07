@@ -1,15 +1,16 @@
 from serial_communication.serial_utils import Arduino, set_prog_speed, set_speed, obstacle_detected, reset_obstacle_detected
 from camera.perception_students import perception
-from camera.line_detection import motor_speeds_from_image_direction, motor_speeds_from_image_centroid
+from camera.line_detection import motor_speeds_from_image_direction, motor_speeds_from_image_centroid, iters_since_no_line
 from utils import wait, floor
 from camera.perception_students import show_image
 from camera.corner_detection import detect_intersection
 
 arduino = Arduino()
-def follow_line(use_default_parameters=True, expected_corners=4, on_intersection_callback=None,
+def follow_line(use_default_parameters=True, expected_corners=4, on_intersection_callback=None, on_obstacle_intersection=None, on_obstacle_line=None,
                 speed=50, error_weight=0.7, speed_factor=2, width_threshold=0.5):
     intersection_detected = False
     detections = 0
+    image = perception(feedback=False)
     if not use_default_parameters:
         speed = input("Enter speed: ")
         error_weight = input("Enter error weight (L): ")
@@ -20,9 +21,12 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
         speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
         width_threshold = float(width_threshold) if width_threshold.replace('.', '', 1).isdigit() else 0.5
     if on_intersection_callback is not None:
-        on_intersection_callback(arduino) #first turn decision
+        on_intersection_callback(arduino, image) #first turn decision
     while True:
         image = perception(feedback=False)
+        if iters_since_no_line > 10:
+            arduino.set_speed(0)
+            exit()
         if image is None:
             print("No image")
             continue
@@ -33,18 +37,30 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             if detections >= 3:
                 intersection_detected = True
                 detections = 0
-        elif intersection_detected:
+        if intersection_detected:
             arduino.set_speed(0, 0)
             wait(1)
-            intersection_detected = False
             if on_intersection_callback is not None:
-                on_intersection_callback(arduino)
+                on_intersection_callback(arduino, image)
             continue
-        elif arduino.obstacle_detected():
+        if arduino.obstacle_detected():
             arduino.set_speed(0, 0)
             print("Obstacle detected")
-            wait(0.5)
-            arduino.reset_obstacle_detected()
+            for i in range(3):
+                wait(0.5)
+                arduino.reset_obstacle_detected()
+                if not arduino.obstacle_detected():
+                    break
+            else:
+                if intersection_detected:
+                    if on_obstacle_intersection is not None:
+                        on_obstacle_intersection(arduino, image)
+                else:
+                    if on_obstacle_line is not None:
+                        arduino.turn_degrees(190)
+                        on_obstacle_line()
+
+
             #arduino.turn_degrees(180)
             #wait(0.5)
             #arduino.reset_obstacle_detected()
@@ -52,3 +68,4 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
             arduino.set_speed(left, right)
+        intersection_detected = False

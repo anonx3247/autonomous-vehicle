@@ -126,6 +126,7 @@ class Pathfinder(object):
             self.orientation = 2
         elif (position_suivante - self.pos) == -5:
             self.orientation = 0
+        self.prev = self.pos
         self.pos = position_suivante
         print('prev:', self.prev_orientation, 'ori:', self.orientation, 'next pos:', self.pos)
 
@@ -139,15 +140,12 @@ class Pathfinder(object):
 
         return conv(90 * (self.orientation - self.prev_orientation))
 
-    def aucune_sortie(self):
+    def enleve_arrete_en_face(self):
         self.enleve(self.pos, self.prev)
-
-        return self.decision()
+        self.djikstra(self.obj)
     
     def route_barree(self):
         self.orientation = (self.orientation + 2) %2 #on se retourne
         self.enleve(self.pos, self.prev) 
-        self.pos = self.prev
-        return self.decision()
-    
+        self.pos = self.prev    
     
