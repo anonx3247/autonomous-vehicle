@@ -1,11 +1,11 @@
-from serial_communication.serial_utils import Arduino, set_prog_speed, set_speed, obstacle_detected, reset_obstacle_detected
+from serial_communication.serial_utils import connect_arduino, set_prog_speed, set_speed, obstacle_detected, reset_obstacle_detected
 from camera.perception_students import perception
 from camera.line_detection import motor_speeds_from_image_direction, motor_speeds_from_image_centroid
 from utils import wait, floor
 from camera.perception_students import show_image
 from camera.corner_detection import detect_intersection
 
-arduino = Arduino(protection=True)
+arduino = connect_arduino(protection=True)
 def follow_line(expected_corners=4):
     intersection_detected = False
     detections = 0
@@ -30,20 +30,20 @@ def follow_line(expected_corners=4):
                 intersection_detected = True
                 detections = 0
         elif intersection_detected:
-            arduino.set_speed(0, 0)
+            set_speed(arduino, 0, 0)
             wait(1)
-            arduino.set_speed(-500, 500)
+            set_speed(arduino, -500, 500)
             wait(1.5)
-            arduino.set_speed(0, 0)
+            set_speed(arduino, 0, 0)
             wait(1)
             intersection_detected = False
             continue
-        if arduino.obstacle_detected():
-            arduino.set_speed(0, 0)
+        if obstacle_detected(arduino):
+            set_speed(arduino, 0, 0)
             print("Obstacle detected")
             wait(0.5)
-            arduino.reset_obstacle_detected()
+            reset_obstacle_detected(arduino)
         else:
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
-            arduino.set_speed(left, right)
+            set_speed(arduino, left, right)

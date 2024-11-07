@@ -233,7 +233,8 @@ class Arduino:
     
     def get_encoders(self):
         self.write(commands['GET_ENCODERS'])
-        return self.read()
+        val = self.read()
+        return [int(x) for x in val.split(' ')]
 
     def set_speed(self, left, right=None):
         if right is None:
