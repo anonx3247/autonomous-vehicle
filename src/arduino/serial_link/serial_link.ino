@@ -691,10 +691,10 @@ inline void collisionDetection() {
     if (analogRead(IR_pin) > 500)  // on a détecté un obstacleDetectedacle
     {
       obstacleDetected = true;  // indique que l'on a détecté un obstacleDetectedacle
-      m1Voltage = 0;
-      m2Voltage = 0;
-      set_motor1(0);
-      set_motor2(0);
+      //m1Voltage = 0;
+      //m2Voltage = 0;
+      //set_motor1(0);
+      //set_motor2(0);
       isProgressiveAccelerationOn = false;  // arret du démarrage progressif
     } 
     time4 = time4 + delay4;
