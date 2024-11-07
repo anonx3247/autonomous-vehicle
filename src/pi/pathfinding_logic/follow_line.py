@@ -6,7 +6,7 @@ from camera.perception_students import show_image
 from camera.corner_detection import detect_intersection
 
 arduino = Arduino()
-def follow_line(use_default_parameters=True, expected_corners=4):
+def follow_line(use_default_parameters=True, expected_corners=4, on_intersection_callback=None):
     intersection_detected = False
     detections = 0
     if use_default_parameters:
@@ -39,6 +39,8 @@ def follow_line(use_default_parameters=True, expected_corners=4):
             arduino.set_speed(0, 0)
             wait(2)
             intersection_detected = False
+            if on_intersection_callback is not None:
+                on_intersection_callback(arduino)
             continue
         if arduino.obstacle_detected():
             arduino.set_speed(0, 0)
