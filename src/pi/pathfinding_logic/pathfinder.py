@@ -141,6 +141,7 @@ class Pathfinder(object):
         return conv(90 * (self.orientation - self.prev_orientation))
 
     def enleve_arrete_en_face(self, prev):
+        print('enleve:', self.pos, self.prev)
         self.enleve(self.pos, self.prev)
         self.djikstra(prev, self.obj)
     
