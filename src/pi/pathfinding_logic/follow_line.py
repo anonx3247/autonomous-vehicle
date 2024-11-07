@@ -25,10 +25,11 @@ def follow_line():
             intersection_detected = True
         elif intersection_detected:
             set_speed(arduino, 0, 0)
-            wait(0.5)
+            wait(1)
             set_speed(arduino, -500, 500)
-            wait(0.5)
+            wait(1.5)
             set_speed(arduino, 0, 0)
+            wait(1)
             intersection_detected = False
             continue
         if obstacle_detected(arduino):
