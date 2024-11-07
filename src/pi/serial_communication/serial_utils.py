@@ -260,6 +260,7 @@ class Arduino:
         self.set_speed(speed * sign(degrees), -speed * sign(degrees))
         enc = self.get_encoders()
         val = right_angle_factor / 90 * abs(degrees)
-        while abs(enc[0] - self.get_encoders()[0]) < val and abs(enc[1] - self.get_encoders()[1]) < val:
+        while abs(enc[0] - self.get_encoders()[0]) < val:
+            print(self.get_encoders()[0])
             pass
         self.set_speed(0, 0)
