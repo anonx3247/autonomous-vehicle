@@ -28,7 +28,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             continue
         detected = detect_intersection(image, width_threshold=width_threshold, expected_corners=expected_corners)
         if detected:
-            print("Intersection detected", detections)
+            #print("Intersection detected", detections)
             detections += 1
             if detections >= 3:
                 intersection_detected = True
