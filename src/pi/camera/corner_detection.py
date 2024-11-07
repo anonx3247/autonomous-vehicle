@@ -27,7 +27,7 @@ def corner_detection(img,a=100):
     dst = cv2.dilate(dst,None)
 
     # Threshold for an optimal value, it may vary depending on the image.
-    gray[dst>0.1*dst.max()]=[0,0,255]
+    #gray[dst>0.1*dst.max()]=[0,0,255]
 
     cv2.imshow('dst',img)
     if cv2.waitKey(0) & 0xff == 27:
