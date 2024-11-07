@@ -100,7 +100,7 @@ class Pathfinder(object):
         path = path[::-1]
         if distances[end] == np.inf:
             return 'impossible'
-        return iter(path)
+        return iter(path[1:])
 
     def decision(self, objectif = -1):
         """
