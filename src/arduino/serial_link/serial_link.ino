@@ -688,7 +688,7 @@ inline void progressiveAcceleration() {
 inline void collisionDetection() {
   if (((int)millis() - time4) > 0)  // si on a atteint le temps programmé
   {
-    if (analogRead(IR_pin) > 500)  // on a détecté un obstacleDetectedacle
+    if (analogRead(IR_pin) > 200)  // on a détecté un obstacleDetectedacle
     {
       obstacleDetected = true;  // indique que l'on a détecté un obstacleDetectedacle
       //m1Voltage = 0;

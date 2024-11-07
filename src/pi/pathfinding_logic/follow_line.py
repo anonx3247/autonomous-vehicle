@@ -6,15 +6,11 @@ from camera.perception_students import show_image
 from camera.corner_detection import detect_intersection
 
 arduino = Arduino()
-def follow_line(use_default_parameters=True, expected_corners=4, on_intersection_callback=None):
+def follow_line(use_default_parameters=True, expected_corners=4, on_intersection_callback=None,
+                speed=50, error_weight=0.7, speed_factor=2, width_threshold=0.5):
     intersection_detected = False
     detections = 0
-    if use_default_parameters:
-        speed = 50
-        error_weight = 0.7
-        speed_factor = 2
-        width_threshold = 0.5
-    else:
+    if not use_default_parameters:
         speed = input("Enter speed: ")
         error_weight = input("Enter error weight (L): ")
         speed_factor = input("Enter speed factor (1/R): ")

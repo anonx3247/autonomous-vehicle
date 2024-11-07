@@ -13,7 +13,7 @@ def callback(arduino):
     wait(0.5)
 
 def main():
-    follow_line(callback)
+    follow_line(width_threshold=0.3, on_intersection_callback=callback)
 
 if __name__ == "__main__":
     main()
