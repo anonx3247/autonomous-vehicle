@@ -3,7 +3,7 @@ from utils import wait
 from pathfinding_logic.follow_line import follow_line
 from pathfinding_logic.pathfinder import Pathfinder
 pathfinder = Pathfinder()
-address = 24
+address = int(input('address:'))
 
 def callback(arduino):
     global pathfinder       
