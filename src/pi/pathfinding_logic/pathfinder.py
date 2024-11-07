@@ -12,6 +12,7 @@ class Pathfinder(object):
         self.prev_orientation = orientation
         self.mat = np.zeros((25, 25))
         self.obj = 0
+        self.path = iter([self.pos])
         self.directions = {
             0: (0, 1),    # Nord
             1: (1, 0),    # Est
@@ -63,18 +64,9 @@ class Pathfinder(object):
         elif abs(start - end) == 5:
             return 'vertical'
         return None
-
-
-    def decision(self, objectif = -1):
-        """
-        return -1 if impossible
-        return -2 if objectif reached
-        else : return angle of rotation necessary to reach the objective
-        
-        """
-        if objectif != -1:
-            self.obj = objectif
-        if self.pos == self.obj:
+    
+    def djikstra(self, start, end):
+        if start == end:
             return 'arrived'
         n = self.mat.shape[0]
         distances = np.full(n, np.inf)
@@ -101,15 +93,35 @@ class Pathfinder(object):
                         previous_nodes[neighbor] = current_node
                         heapq.heappush(priority_queue, (new_distance, neighbor, new_direction))
         path = []
-        current = self.obj
+        current = end
         while current != -1:
             path.append(int(current))
             current = previous_nodes[current]
         path = path[::-1]
-        if distances[self.obj] == np.inf:
+        if distances[end] == np.inf:
             return 'impossible'
-        print('path:', path)
-        position_suivante = path[1]
+        return iter(path)
+
+    def decision(self, objectif = -1):
+        """
+        return -1 if impossible
+        return -2 if objectif reached
+        else : return angle of rotation necessary to reach the objective
+        
+        """
+        if objectif != -1:
+            self.obj = objectif
+        if self.pos == self.obj:
+            return 'arrived'
+        if objectif != self.objectif:
+            res = self.djikstra(self.pos, objectif)
+            if type(res) == str:
+                print('impossible')
+                exit()
+            else:
+                self.path = res
+            
+        position_suivante = next(self.path)
         self.prev_orientation = self.orientation
         if (position_suivante - self.pos) == 1: 
             self.orientation = 1
