@@ -220,6 +220,7 @@ class Arduino:
             self.check_connection()
             print('Not connected, retry...')
             wait(0.1)
+        print('Connected')
 
     def check_connection(self):
         self.write(commands['GET_ENCODERS'])
