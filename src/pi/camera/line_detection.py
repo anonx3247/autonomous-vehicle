@@ -55,7 +55,7 @@ def find_centroid(image):
         #cv2.imshow('image', im2)
         return (cx, cy)
     else:
-        #print("No Centroid Found")
+        print("No Centroid Found")
         return None
     #cv2.imwrite('out_test.png', im2)
 
