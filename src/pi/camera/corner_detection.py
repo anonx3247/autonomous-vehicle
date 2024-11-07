@@ -8,7 +8,7 @@ def corner_detection(img,a=100):
     gray = np.float32(dilated_mask)
 
     dst = cv2.cornerHarris(gray,7,3,0.15)
-    corners = cv2.goodFeaturesToTrack(gray, 5,5,20)
+    corners = cv2.goodFeaturesToTrack(gray, 5,1,20)
     if corners is None:
         return False, []
     corners = np.int32(corners)
