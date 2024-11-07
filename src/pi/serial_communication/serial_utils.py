@@ -232,6 +232,18 @@ class Arduino:
     def read(self):
         return self.arduino.readline().decode('utf-8').rstrip()
     
+    def smart_read(self):
+        t = time.time()
+        s = ''
+        read = False
+        while time.time() - t < 0.1 or not read:
+            s += self.arduino.read().decode('utf-8')
+            if s[-1] == '\n':
+                read = True
+                break
+        return s
+
+    
     def write(self, command):
         self.arduino.write(bytes(command, 'utf-8'))
     
@@ -247,7 +259,8 @@ class Arduino:
     
     def get_encoders(self):
         self.write(commands['GET_ENCODERS'])
-        val = self.read()
+        #val = self.read()
+        val = self.smart_read()
         try:
             self.last_enc = [int(x) for x in val.split(' ')]
             return self.last_enc
@@ -256,7 +269,8 @@ class Arduino:
 
     def get_motor_speed(self):
         self.write(commands['GET_MOTOR_VOLTAGES'])
-        val = self.read()
+        #val = self.read()
+        val = self.smart_read()
         try:
             return [int(x) for x in val.split(' ')]
         except:
