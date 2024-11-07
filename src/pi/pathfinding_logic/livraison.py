@@ -4,7 +4,7 @@ from pathfinding_logic.follow_line import follow_line
 from pathfinding_logic.pathfinder import Pathfinder
 pathfinder = Pathfinder()
 
-addresses = [12, 24, 0]
+addresses = [11, 18, 0]
 idx = 0
 address = addresses[idx]
 
@@ -14,10 +14,10 @@ def callback(arduino):
     print('rotation',   rotation)
     if type(rotation) == str:
         if rotation == 'arrived':
-            if address == addresses[-1]:
+            if idx == len(address)-1:
                 exit()
             wait(2)
-            pathfinder.position = address
+            # pathfinder.pos = address
             idx += 1
             address = addresses[idx]
         print(rotation)
