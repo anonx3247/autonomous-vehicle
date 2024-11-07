@@ -2,7 +2,7 @@ import serial
 import time
 import sys
 import glob
-from utils import wait
+from utils import wait, sign
 
 def connect_arduino(protection=True, port_selection=True):
     
@@ -247,3 +247,20 @@ class Arduino:
             self.write(commands['SET_PROTECTION'])
         else:
             self.write(commands['DISABLE_PROTECTION'])
+
+    def advance_for(self, val, left, right):
+        self.set_speed(left, right)
+        enc = self.get_encoders()
+        while abs(enc[0] - self.get_encoders()[0]) < val and abs(enc[1] - self.get_encoders()[1]) < val:
+            enc = self.get_encoders()
+            wait(0.1)
+        self.set_speed(0, 0)
+    
+    def turn_degrees(self, degrees, speed, right_angle_factor=315):
+        self.set_speed(speed * sign(degrees), -speed * sign(degrees))
+        enc = self.get_encoders()
+        val = right_angle_factor / 90 * abs(degrees)
+        while abs(enc[0] - self.get_encoders()[0]) < val and abs(enc[1] - self.get_encoders()[1]) < val:
+            enc = self.get_encoders()
+            wait(0.1)
+        self.set_speed(0, 0)
