@@ -22,34 +22,32 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     if on_intersection_callback is not None:
         on_intersection_callback(arduino) #first turn decision
     while True:
-        r_speed, l_speed = arduino.get_motor_speed()
-        print('r:', r_speed, 'l:', l_speed)
         image = perception(feedback=False)
         if image is None:
             print("No image")
             continue
         detected = detect_intersection(image, width_threshold=width_threshold, expected_corners=expected_corners)
-        if arduino.obstacle_detected():
-            arduino.set_speed(0, 0)
-            print("Obstacle detected")
-            wait(0.5)
-            # arduino.reset_obstacle_detected()
-            # arduino.turn_degrees(180)
-            # wait(0.5)
-            arduino.reset_obstacle_detected()
-        elif detected:
+        if detected:
             print("Intersection detected", detections)
             detections += 1
             if detections >= 3:
                 intersection_detected = True
                 detections = 0
         elif intersection_detected:
-            wait(0.7)
             arduino.set_speed(0, 0)
+            wait(2)
             intersection_detected = False
             if on_intersection_callback is not None:
                 on_intersection_callback(arduino)
             continue
+        if arduino.obstacle_detected():
+            arduino.set_speed(0, 0)
+            print("Obstacle detected")
+            wait(0.5)
+            arduino.reset_obstacle_detected()
+            arduino.turn_degrees(180)
+            wait(0.5)
+            arduino.reset_obstacle_detected()
         else:
             (left, right) = motor_speeds_from_image_centroid(image, speed, error_weight, speed_factor)
             left, right = floor(left, right)
