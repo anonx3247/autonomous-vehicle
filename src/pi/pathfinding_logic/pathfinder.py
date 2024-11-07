@@ -120,7 +120,8 @@ class Pathfinder(object):
         elif (position_suivante - self.pos) == -5:
             self.orientation = 0
         self.pos = position_suivante
-        print('ori:', self.orientation, 'pos:', self.pos)
+        print('prev:', self.prev_orientation, 'ori:', self.orientation, 'pos:', self.pos)
+
         return 90 * (self.orientation - self.prev_orientation)
 
     def aucune_sortie(self):
