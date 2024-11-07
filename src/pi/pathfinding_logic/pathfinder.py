@@ -5,11 +5,11 @@ from matplotlib.patches import FancyArrowPatch
 
 
 class Pathfinder(object):
-    def __init__(self, position = 0, orientation = 0) -> None:
-        self.pos = 0
-        self.prev = 0
-        self.orientation = 0
-        self.prev_orientation = 0
+    def __init__(self, position = 0, orientation = 1) -> None:
+        self.pos = position
+        self.prev = position
+        self.orientation = orientation
+        self.prev_orientation = orientation
         self.mat = np.zeros((25, 25))
         self.obj = 0
         self.directions = {
