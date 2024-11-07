@@ -13,6 +13,7 @@ def callback(arduino):
         print(rotation)
         exit()
     elif rotation != 0:
+        wait(0.5)
         arduino.turn_degrees(-rotation, right_angle_factor=200)
 
 def main():
