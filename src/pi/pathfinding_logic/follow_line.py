@@ -7,7 +7,7 @@ from camera.corner_detection import corner_detection
 
 arduino = connect_arduino(protection=True)
 def follow_line():
-    intersection_detected = False
+    intersection_detected = 0
     speed = input("Enter speed: ")
     error_weight = input("Enter error weight (L): ")
     speed_factor = input("Enter speed factor (1/R): ")
@@ -22,15 +22,15 @@ def follow_line():
         detected, _ = corner_detection(image)
         if detected:
             print("Intersection detected")
-            intersection_detected = True
-        elif intersection_detected:
+            intersection_detected += 1
+        elif intersection_detected >= 3:
             set_speed(arduino, 0, 0)
             wait(1)
             set_speed(arduino, -500, 500)
             wait(1.5)
             set_speed(arduino, 0, 0)
             wait(1)
-            intersection_detected = False
+            intersection_detected = 0
             continue
         if obstacle_detected(arduino):
             set_speed(arduino, 0, 0)
