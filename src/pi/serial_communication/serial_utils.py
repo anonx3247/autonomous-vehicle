@@ -211,6 +211,7 @@ class Arduino:
                     break
                 print('Connection failed, retry...')
         self.connected = False
+        self.last_enc = [0,0]
         if attempt_connection:
             self.connect()
     
@@ -247,7 +248,12 @@ class Arduino:
     def get_encoders(self):
         self.write(commands['GET_ENCODERS'])
         val = self.read()
-        return [int(x) for x in val.split(' ')]
+        try:
+            self.last_enc = [int(x) for x in val.split(' ')]
+            return self.last_enc
+        except:
+            return self.last_enc
+
 
     def set_speed(self, left=None, right=None):
         if left is None:

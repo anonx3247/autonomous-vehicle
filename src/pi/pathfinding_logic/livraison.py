@@ -14,7 +14,6 @@ def callback(arduino):
         exit()
     elif rotation != 0:
         arduino.turn_degrees(-rotation, right_angle_factor=200)
-    wait(0.5)
 
 def main():
     follow_line(width_threshold=0.3, on_intersection_callback=callback)

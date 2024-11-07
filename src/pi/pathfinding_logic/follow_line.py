@@ -35,7 +35,6 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 detections = 0
         elif intersection_detected:
             arduino.set_speed(0, 0)
-            wait(2)
             intersection_detected = False
             if on_intersection_callback is not None:
                 on_intersection_callback(arduino)
