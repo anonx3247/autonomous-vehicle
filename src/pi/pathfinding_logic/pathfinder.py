@@ -67,7 +67,7 @@ class Pathfinder(object):
         if objectif != -1:
             self.obj = objectif
         if self.pos == self.obj:
-            return -2 
+            return 'arrived'
         n = self.mat.shape[0]
         distances = np.full(n, np.inf)
         distances[self.pos] = 0  # Distance de départ à lui-même est 0
@@ -97,7 +97,7 @@ class Pathfinder(object):
             current = previous_nodes[current]
         path = path[::-1]
         if distances[self.obj] == np.inf:
-            return -1
+            return 'impossible'
         
         position_suivante = path[1]
         self.prev_orientation = self.orientation
