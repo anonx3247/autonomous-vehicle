@@ -5,7 +5,6 @@ from utils import wait, floor
 from camera.perception_students import show_image
 from camera.corner_detection import detect_intersection
 
-arduino = Arduino(protection=True)
 def follow_line(expected_corners=4):
     intersection_detected = False
     detections = 0
