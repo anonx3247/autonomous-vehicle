@@ -12,7 +12,6 @@ address = addresses[idx]
 
 def callback(arduino):
     global pathfinder, idx, address, addresses  
-    real_prev = pathfinder.prev
     rotation = pathfinder.decision(address)
         
     print('rotation',   rotation)
@@ -33,7 +32,7 @@ def callback(arduino):
     c = find_centroid(image)
     if c is None:
         print('enlevement d\'arrete')
-        pathfinder.enleve_arrete_en_face(real_prev)
+        pathfinder.enleve_arrete_en_face()
         callback(arduino)
 
 def obstacle_line():

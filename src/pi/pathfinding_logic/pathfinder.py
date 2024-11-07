@@ -140,10 +140,12 @@ class Pathfinder(object):
 
         return conv(90 * (self.orientation - self.prev_orientation))
 
-    def enleve_arrete_en_face(self, prev):
+    def enleve_arrete_en_face(self):
         print('enleve:', self.pos, self.prev)
         self.enleve(self.pos, self.prev)
-        self.djikstra(prev, self.obj)
+        self.pos = self.prev
+        self.djikstra(self.pos, self.obj)
+        
     
     def route_barree(self):
         self.orientation = (self.orientation + 2) %2 #on se retourne
