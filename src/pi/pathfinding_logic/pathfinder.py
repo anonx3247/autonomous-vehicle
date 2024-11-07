@@ -109,11 +109,10 @@ class Pathfinder(object):
         else : return angle of rotation necessary to reach the objective
         
         """
-        if objectif != -1:
-            self.obj = objectif
         if self.pos == self.obj:
             return 'arrived'
         if objectif != self.obj:
+            self.obj = objectif
             res = self.djikstra(self.pos, objectif)
             if type(res) == str:
                 print('impossible')
