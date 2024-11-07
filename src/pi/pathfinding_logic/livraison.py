@@ -20,6 +20,7 @@ def callback(arduino):
             pathfinder.pos = address
             idx += 1
             address = addresses[idx]
+            callback(arduino)
         print(rotation)
         
     elif rotation != 0:

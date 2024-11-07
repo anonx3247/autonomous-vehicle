@@ -99,8 +99,9 @@ class Pathfinder(object):
             current = previous_nodes[current]
         path = path[::-1]
         if distances[end] == np.inf:
-            return 'impossible'
-        return iter(path[1:])
+            print('impossible')
+            exit()
+        self.path = iter(path[1:])
 
     def decision(self, objectif = -1):
         """
@@ -113,12 +114,7 @@ class Pathfinder(object):
             return 'arrived'
         if objectif != self.obj:
             self.obj = objectif
-            res = self.djikstra(self.pos, objectif)
-            if type(res) == str:
-                print('impossible')
-                exit()
-            else:
-                self.path = res
+            self.djikstra(self.pos, objectif)
             
         position_suivante = next(self.path)
         self.prev_orientation = self.orientation
