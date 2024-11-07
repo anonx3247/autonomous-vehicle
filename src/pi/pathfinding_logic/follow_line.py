@@ -50,16 +50,17 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
         if arduino.obstacle_detected():
             arduino.set_speed(0, 0)
             print("Obstacle detected")
-            for i in range(3):
+            still_there = True
+            for _ in range(3):
                 wait(0.5)
                 arduino.reset_obstacle_detected()
                 if not arduino.obstacle_detected():
+                    still_there = False
                     break
-            else:
-                if on_obstacle_line is not None:
-                    arduino.turn_degrees(190)
-                    print('obstacle line')
-                    on_obstacle_line()
+            if on_obstacle_line is not None and still_there:
+                arduino.turn_degrees(190)
+                print('obstacle line')
+                on_obstacle_line()
 
             #arduino.turn_degrees(180)
             #wait(0.5)
