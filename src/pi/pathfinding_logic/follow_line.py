@@ -45,6 +45,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 on_intersection_callback(arduino)
             if on_obstacle_intersection is not None and arduino.obstacle_detected():
                 print('obstacle int')
+                arduino.reset_obstacle_detected()
                 on_obstacle_intersection(arduino)
             continue
         if arduino.obstacle_detected():
