@@ -261,6 +261,5 @@ class Arduino:
         enc = self.get_encoders()
         val = right_angle_factor / 90 * abs(degrees)
         while abs(enc[0] - self.get_encoders()[0]) < val and abs(enc[1] - self.get_encoders()[1]) < val:
-            enc = self.get_encoders()
-            wait(0.1)
+            pass
         self.set_speed(0, 0)
