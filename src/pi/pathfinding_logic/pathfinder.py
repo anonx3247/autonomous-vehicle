@@ -127,7 +127,7 @@ class Pathfinder(object):
         elif (position_suivante - self.pos) == -5:
             self.orientation = 0
         self.pos = position_suivante
-        print('prev:', self.prev_orientation, 'ori:', self.orientation, 'pos:', self.pos)
+        print('prev:', self.prev_orientation, 'ori:', self.orientation, 'next pos:', self.pos)
 
         def conv(deg):
             if deg > 180:

@@ -21,7 +21,6 @@ def callback(arduino):
             idx += 1
             address = addresses[idx]
             callback(arduino)
-        print(rotation)
         
     elif rotation != 0:
         arduino.turn_degrees(-rotation, right_angle_factor=150)

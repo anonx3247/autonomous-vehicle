@@ -306,7 +306,7 @@ class Arduino:
         if speed is None:
             speed = int(self.base_speed * 1.5)
         enc = self.get_encoders()
-        print('left:', speed * sign(degrees), 'right:', -speed * sign(degrees))
+        #print('left:', speed * sign(degrees), 'right:', -speed * sign(degrees))
         self.set_speed(speed * sign(degrees), -speed * sign(degrees))
         val = right_angle_factor / 90 * abs(degrees)
         while abs(enc[0] - self.get_encoders()[0]) < val:
