@@ -8,3 +8,4 @@
 il contient deux dossiers:
 - `arduino` pour le code arduino (en C)
 - `pi` pour le code sur le raspberrypi (en Python)
+hello
