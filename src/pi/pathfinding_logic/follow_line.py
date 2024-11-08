@@ -86,7 +86,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 arduino.reset_obstacle_detected()
                 arduino.turn_degrees(190)
                 print('obstacle line')
-                on_obstacle_line(address)
+                on_obstacle_line(int(address))
 
             #arduino.turn_degrees(180)
             #wait(0.5)

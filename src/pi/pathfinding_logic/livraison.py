@@ -42,7 +42,7 @@ def obstacle_line(address):
     pathfinder.orientation = (pathfinder.orientation - 2) % 4
     pathfinder.enleve(pathfinder.prev, pathfinder.pos)
     pathfinder.pos = pathfinder.prev
-    pathfinder.djikstra(pathfinder.pos, address)
+    pathfinder.djikstra(pathfinder.pos, int(address))
     
     
 
