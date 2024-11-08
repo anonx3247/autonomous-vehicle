@@ -52,7 +52,12 @@ def obstacle_int(arduino):
     callback(arduino)
 
 def main():
-    follow_line(width_threshold=0.3, on_intersection_callback=callback, on_obstacle_line=obstacle_line, on_obstacle_intersection=obstacle_int)
+    follow_line(
+        use_default_parameters=False,
+        width_threshold=0.3, 
+        on_intersection_callback=callback, 
+        on_obstacle_line=obstacle_line, 
+        on_obstacle_intersection=obstacle_int)
 
 if __name__ == "__main__":
     main()
