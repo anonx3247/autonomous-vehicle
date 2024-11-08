@@ -12,7 +12,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     detections = 0
     image = perception(feedback=False)
     addresses = []
-    address = input("Next adress: ")
+    address = int(input("Next adress: "))
     if type(address) == list:
         address += address
     else :
@@ -29,7 +29,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     if on_intersection_callback is not None:
         end_livraison = on_intersection_callback(arduino, addresses)
         if end_livraison: 
-            address = input('Next address: ')
+            address = int(input('Next address: '))
             if address == -1:
                 exit()#first turn decision
             if type(address) == list:
@@ -58,7 +58,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             if on_intersection_callback is not None:
                 end_livraison = on_intersection_callback(arduino, addresses)
                 if end_livraison: 
-                    address = input('Next address: ')
+                    address = int(input('Next address: '))
                     if address == -1:
                         exit()#first turn decision
                     if type(address) == list:
