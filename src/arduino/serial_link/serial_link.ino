@@ -124,7 +124,7 @@ void init_arduino() {
   motorSpeedCalculationOn();
   isProgressiveAccelerationOn = false;
   isCollisionDetectionOn = true;
-  isServoRotationOn = false;
+  isServoRotationOn = true;
 }
 
 void setup() {
