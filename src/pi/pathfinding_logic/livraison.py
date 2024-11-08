@@ -11,8 +11,8 @@ idx = 0
 #address = addresses[idx]
 
 def callback(arduino,addresses):
-    address = addresses[idx]
     global pathfinder, idx  
+    address = addresses[idx]
     rotation = pathfinder.decision(address)
         
     print('rotation',   rotation)
