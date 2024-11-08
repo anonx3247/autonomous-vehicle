@@ -6,7 +6,7 @@ from camera.line_detection import find_centroid
 from camera.perception_students import perception
 pathfinder = Pathfinder()
 
-addresses = [11, 0]
+addresses = [11, 18, 0]
 idx = 0
 address = addresses[idx]
 
