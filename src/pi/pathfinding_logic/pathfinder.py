@@ -22,7 +22,7 @@ class Pathfinder(object):
 
         for i in range(49):
             
-            if i % 7 != 4:  
+            if i % 7 != 6:  
                 self.mat[i, i + 1] = 1
                 self.mat[i + 1, i] = 1
             if i % 7 != 0:  
@@ -41,7 +41,7 @@ class Pathfinder(object):
 
         for i in range(49):
             
-            if i % 7 != 4:  
+            if i % 7 != 6:  
                 self.mat[i, i + 1] = 1
             if i % 7 != 0:  
                 self.mat[i, i - 1] = 1
