@@ -37,8 +37,8 @@ def callback(arduino,addresses):
         pathfinder.enleve_arrete_en_face()
         return callback(arduino,addresses)
 
-def obstacle_line():
-    global pathfinder, address
+def obstacle_line(address):
+    global pathfinder
     pathfinder.orientation = (pathfinder.orientation - 2) % 4
     pathfinder.enleve(pathfinder.prev, pathfinder.pos)
     pathfinder.pos = pathfinder.prev

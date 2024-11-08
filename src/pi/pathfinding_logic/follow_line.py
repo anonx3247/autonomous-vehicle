@@ -12,11 +12,11 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     detections = 0
     image = perception(feedback=False)
     addresses = []
-    address = int(input("Next adress: "))
+    address = input("Next adress: ")
     if type(address) == list:
         address += address
     else :
-        addresses.append(address)
+        addresses.append(int(address))
     if not use_default_parameters:
         speed = input("Enter speed: ")
         error_weight = input("Enter error weight (L): ")
@@ -29,13 +29,13 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     if on_intersection_callback is not None:
         end_livraison = on_intersection_callback(arduino, addresses)
         if end_livraison: 
-            address = int(input('Next address: '))
+            address = input('Next address: ')
             if address == -1:
                 exit()#first turn decision
             if type(address) == list:
                 address += address
             else :
-                addresses.append(address)
+                addresses.append(int(address))
             on_intersection_callback(arduino, addresses) 
     while True:
         image = perception(feedback=False)
@@ -59,13 +59,13 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             if on_intersection_callback is not None:
                 end_livraison = on_intersection_callback(arduino, addresses)
                 if end_livraison: 
-                    address = int(input('Next address: '))
+                    address = input('Next address: ')
                     if address == -1:
                         exit()#first turn decision
                     if type(address) == list:
                         address += address
                     else :
-                        addresses.append(address)
+                        addresses.append(int(address))
                     on_intersection_callback(arduino, addresses)
             if on_obstacle_intersection is not None and arduino.obstacle_detected():
                 print('obstacle int')
@@ -86,7 +86,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 arduino.reset_obstacle_detected()
                 arduino.turn_degrees(190)
                 print('obstacle line')
-                on_obstacle_line()
+                on_obstacle_line(address)
 
             #arduino.turn_degrees(180)
             #wait(0.5)
