@@ -15,7 +15,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     addresses = []
     address = input("Next adress: ")
     if type(ast.literal_eval(address)) == list:
-        addresses += address
+        addresses += ast.literal_eval(address)
     else :
         addresses.append(int(address))
     if not use_default_parameters:
@@ -34,7 +34,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             if address == -1:
                 exit()#first turn decision
             if type(ast.literal_eval(address)) == list:
-                addresses += address
+                addresses += ast.literal_eval(address)
             else :
                 addresses.append(int(address))
             on_intersection_callback(arduino, addresses) 
@@ -64,7 +64,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                     if address == -1:
                         exit()#first turn decision
                     if type(ast.literal_eval(address)) == list:
-                        addresses += address
+                        addresses += ast.literal_eval(address)
                     else :
                         addresses.append(int(address))
                     on_intersection_callback(arduino, addresses)
