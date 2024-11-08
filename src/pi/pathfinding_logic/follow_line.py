@@ -63,7 +63,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                     address = input('Next address: ')
                     if address == -1:
                         exit()#first turn decision
-                    if type(address) == list:
+                    if type(ast.literal_eval(address)) == list:
                         address += address
                     else :
                         addresses.append(int(address))
