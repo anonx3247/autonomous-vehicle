@@ -40,7 +40,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
         elif intersection_detected:
             arduino.set_speed(0, 0)
             intersection_detected = False
-            wait(1)
+            wait(0.5)
             if on_intersection_callback is not None:
                 on_intersection_callback(arduino)
             if on_obstacle_intersection is not None and arduino.obstacle_detected():

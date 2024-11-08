@@ -19,7 +19,7 @@ def callback(arduino):
         if rotation == 'arrived':
             if idx == len(addresses)-1:
                 exit()
-            wait(2)
+            wait(1)
             pathfinder.pos = address
             idx += 1
             address = addresses[idx]
