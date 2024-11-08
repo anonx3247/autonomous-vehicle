@@ -31,7 +31,7 @@ int delay1 = 100;                    // délai tache 1 de test d'arrivée
 int delay2 = 500;                    // délai regulation moteur
 int delay3 = 100;                    // démarrage progressif des moteurs
 int delay4 = 100;                    // tache de détection des obstacleDetectedacles
-int delay5 = 200;                    // tache de détection des obstacleDetectedacles
+int delay5 = 20;                    // tache de détection des obstacleDetectedacles
 int time1, time2, time3, time4, time5;  // temps du prochain evenement
 bool isCustomTaskOn = false;              // lancement de la tache 1 de test d'arrivée
 bool isMotorSpeedCalculationOn = true;               // lancement de la tache 2 de calcul de vitesse
@@ -168,7 +168,7 @@ void loop() {
   if (isMotorSpeedCalculationOn) motorSpeedCalculation();  // tache de calcul de la vitesse moteur toujours en route
   if (isProgressiveAccelerationOn) progressiveAcceleration();  // tache d'accélération progressive des moteurs
   if (isCollisionDetectionOn) collisionDetection();  // tache de détection de collision
-  if (isServoRotationOn) servoRotation();  // tache de détection de collision
+  servoRotation();  // tache de rotation du servomoteur
 }
 
 
@@ -709,9 +709,9 @@ inline void servoRotation() {
   {
 
     // A COMPLETER EVENTUELLEMENT
-    servoPosition += 10 * servoDirection;
-    if (servoPosition > 270) servoDirection = -1;
-    if (servoPosition < 0) servoDirection = 1;
+    servoPosition += 1 * servoDirection;
+    if (servoPosition > 105) servoDirection = -1;
+    if (servoPosition < 75) servoDirection = 1;
     frontServo.write(servoPosition);
 
     time5 = time5 + delay5;
