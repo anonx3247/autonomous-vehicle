@@ -37,7 +37,7 @@ bool isCustomTaskOn = false;              // lancement de la tache 1 de test d'a
 bool isMotorSpeedCalculationOn = true;               // lancement de la tache 2 de calcul de vitesse
 bool isProgressiveAccelerationOn = false;              // lancement de la tache 3 d'accélération progressive
 bool isCollisionDetectionOn = false;              // lancement de la tache 4 de détection de collision par IR
-bool isServoRotationOn = false;              // lancement de la tache 5 de rotation du servomoteur
+bool isServoRotationOn = true;              // lancement de la tache 5 de rotation du servomoteur
 bool obstacleDetected = false;                 // obstacleDetectedacle détecté
 
 char c, CharIn, m;
@@ -704,10 +704,15 @@ inline void collisionDetection() {
 // tache de rotation du servomoteur
 
 inline void servoRotation() {
+
   if (((int)millis() - time5) > 0)  // si on a atteint le temps programmé
   {
 
     // A COMPLETER EVENTUELLEMENT
+    servoPosition += 10 * servoDirection;
+    if (servoPosition > 270) servoDirection = -1;
+    if (servoPosition < 0) servoDirection = 1;
+    frontServo.write(servoPosition);
 
     time5 = time5 + delay5;
   }
