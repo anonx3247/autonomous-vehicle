@@ -10,7 +10,7 @@ class Pathfinder(object):
         self.prev = position
         self.orientation = orientation
         self.prev_orientation = orientation
-        self.mat = np.zeros((25, 25))
+        self.mat = np.zeros((49, 49))
         self.obj = 0
         self.path = iter([self.pos])
         self.directions = {
@@ -20,35 +20,35 @@ class Pathfinder(object):
             3: (-1, 0)    # Ouest
         }
 
-        for i in range(25):
+        for i in range(49):
             
-            if i % 5 != 4:  
+            if i % 7 != 4:  
                 self.mat[i, i + 1] = 1
                 self.mat[i + 1, i] = 1
-            if i % 5 != 0:  
+            if i % 7 != 0:  
                 self.mat[i, i - 1] = 1
                 self.mat[i - 1, i] = 1
-            if i >= 5:
-                self.mat[i, i - 5] = 1
-                self.mat[i - 5, i] = 1
+            if i >= 7:
+                self.mat[i, i - 7] = 1
+                self.mat[i - 7, i] = 1
             if i < 20:  
-                self.mat[i, i + 5] = 1
-                self.mat[i + 5, i] = 1
+                self.mat[i, i + 7] = 1
+                self.mat[i + 7, i] = 1
 
 
     def restart_mat(self):
-        self.mat = np.zeros((25, 25))
+        self.mat = np.zeros((49, 49))
 
-        for i in range(25):
+        for i in range(49):
             
-            if i % 5 != 4:  
+            if i % 7 != 4:  
                 self.mat[i, i + 1] = 1
-            if i % 5 != 0:  
+            if i % 7 != 0:  
                 self.mat[i, i - 1] = 1
-            if i >= 5:
-                self.mat[i, i - 5] = 1
+            if i >= 7:
+                self.mat[i, i - 7] = 1
             if i < 20:  
-                self.mat[i, i + 5] = 1
+                self.mat[i, i + 7] = 1
 
 
     def enleve(self, ind1, ind2):
@@ -61,7 +61,7 @@ class Pathfinder(object):
     def __get_direction__(self, start, end):
         if abs(start - end) == 1:
             return 'horizontal'
-        elif abs(start - end) == 5:
+        elif abs(start - end) == 7:
             return 'vertical'
         return None
     
@@ -86,7 +86,7 @@ class Pathfinder(object):
                 edge_weight = self.mat[current_node, neighbor]
                 if edge_weight > 0 and not visited[neighbor]:
                     new_direction = self.__get_direction__(current_node, neighbor)
-                    rotation_penalty = 0 if new_direction == last_direction else 0.5
+                    rotation_penalty = 0 if new_direction == last_direction else 0.7
                     new_distance = current_distance + edge_weight + rotation_penalty
                     if new_distance < distances[neighbor]:
                         distances[neighbor] = new_distance
@@ -100,9 +100,7 @@ class Pathfinder(object):
         path = path[::-1]
         if distances[end] == np.inf:
             print('impossible')
-            self.restart_mat()
-            return self.djikstra(start, end)
-            #exit()
+            exit()
         self.path = iter(path[1:])
 
     def decision(self, objectif = -1):
@@ -124,9 +122,9 @@ class Pathfinder(object):
             self.orientation = 1
         elif (position_suivante - self.pos) == -1:
             self.orientation = 3
-        elif (position_suivante - self.pos) == 5:
+        elif (position_suivante - self.pos) == 7:
             self.orientation = 2
-        elif (position_suivante - self.pos) == -5:
+        elif (position_suivante - self.pos) == -7:
             self.orientation = 0
         self.prev = self.pos
         self.pos = position_suivante
@@ -135,9 +133,9 @@ class Pathfinder(object):
         def conv(deg):
             if deg > 180:
                 deg = -(deg - 180)
-            elif deg < -180:
-                deg = -(deg+180)
-            
+
+            if deg == 180 or deg == -180:
+                return 190
             return deg
 
         return conv(90 * (self.orientation - self.prev_orientation))

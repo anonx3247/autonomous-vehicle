@@ -302,7 +302,7 @@ class Arduino:
             wait(0.1)
         self.set_speed(0, 0)
     
-    def turn_degrees(self, degrees, speed=None, right_angle_factor=200):
+    def turn_degrees(self, degrees, speed=None, right_angle_factor=250):
         if speed is None:
             speed = int(self.base_speed * 1.5)
         enc = self.get_encoders()

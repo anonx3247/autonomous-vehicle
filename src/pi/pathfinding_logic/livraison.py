@@ -6,26 +6,24 @@ from camera.line_detection import find_centroid
 from camera.perception_students import perception
 pathfinder = Pathfinder()
 
-#addresses = []
+addresses = [48]
 idx = 0
-#address = addresses[idx]
+address = addresses[idx]
 
-def callback(arduino,addresses):
-    global pathfinder, idx  
-    address = addresses[idx]
+def callback(arduino):
+    global pathfinder, idx, address, addresses  
     rotation = pathfinder.decision(address)
         
     print('rotation',   rotation)
     if type(rotation) == str:
         if rotation == 'arrived':
-            pathfinder.pos = address
             if idx == len(addresses)-1:
-                idx += 1
-                return 'arrived'
+                exit()
             wait(1)
+            pathfinder.pos = address
             idx += 1
             address = addresses[idx]
-            return callback(arduino, addresses)
+            callback(arduino)
         
     elif rotation != 0:
         arduino.turn_degrees(-rotation, right_angle_factor=150)
@@ -35,23 +33,23 @@ def callback(arduino,addresses):
     if c is None:
         print('enlevement d\'arrete')
         pathfinder.enleve_arrete_en_face()
-        return callback(arduino,addresses)
+        callback(arduino)
 
-def obstacle_line(address):
-    global pathfinder
+def obstacle_line():
+    global pathfinder, address
     pathfinder.orientation = (pathfinder.orientation - 2) % 4
     pathfinder.enleve(pathfinder.prev, pathfinder.pos)
     pathfinder.pos = pathfinder.prev
-    pathfinder.djikstra(pathfinder.pos, int(address))
+    pathfinder.djikstra(pathfinder.pos, address)
     
     
 
-def obstacle_int(arduino, addresses, address):
-    global pathfinder
+def obstacle_int(arduino):
+    global pathfinder, address
     pathfinder.enleve_arrete_en_face()
     pathfinder.pos = pathfinder.prev
     pathfinder.djikstra(pathfinder.pos, address)
-    callback(arduino, addresses)
+    callback(arduino)
 
 def main():
     follow_line(

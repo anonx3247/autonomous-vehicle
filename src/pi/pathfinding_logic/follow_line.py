@@ -4,7 +4,6 @@ from camera.line_detection import motor_speeds_from_image_direction, motor_speed
 from utils import wait, floor
 from camera.perception_students import show_image
 from camera.corner_detection import detect_intersection
-import ast
 
 arduino = Arduino()
 def follow_line(use_default_parameters=True, expected_corners=4, on_intersection_callback=None, on_obstacle_intersection=None, on_obstacle_line=None,
@@ -12,12 +11,6 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     intersection_detected = False
     detections = 0
     image = perception(feedback=False)
-    addresses = []
-    address = input("Next adress: ")
-    if type(ast.literal_eval(address)) == list:
-        addresses += ast.literal_eval(address)
-    else :
-        addresses.append(int(address))
     if not use_default_parameters:
         speed = input("Enter speed: ")
         error_weight = input("Enter error weight (L): ")
@@ -28,16 +21,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
         speed_factor = float(speed_factor) if speed_factor.replace('.', '', 1).isdigit() else 2
         width_threshold = float(width_threshold) if width_threshold.replace('.', '', 1).isdigit() else 0.5
     if on_intersection_callback is not None:
-        end_livraison = on_intersection_callback(arduino, addresses)
-        if end_livraison: 
-            address = input('Next address: ')
-            if address == -1:
-                exit()#first turn decision
-            if type(ast.literal_eval(address)) == list:
-                addresses += ast.literal_eval(address)
-            else :
-                addresses.append(int(address))
-            on_intersection_callback(arduino, addresses) 
+        on_intersection_callback(arduino) #first turn decision
     while True:
         image = perception(feedback=False)
         if iters_since_no_line > 10:
@@ -58,20 +42,11 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
             intersection_detected = False
             wait(0.5)
             if on_intersection_callback is not None:
-                end_livraison = on_intersection_callback(arduino, addresses)
-                if end_livraison: 
-                    address = input('Next address: ')
-                    if address == -1:
-                        exit()#first turn decision
-                    if type(ast.literal_eval(address)) == list:
-                        addresses += ast.literal_eval(address)
-                    else :
-                        addresses.append(int(address))
-                    on_intersection_callback(arduino, addresses)
+                on_intersection_callback(arduino)
             if on_obstacle_intersection is not None and arduino.obstacle_detected():
                 print('obstacle int')
                 arduino.reset_obstacle_detected()
-                on_obstacle_intersection(arduino, addresses, int(address))
+                on_obstacle_intersection(arduino)
             continue
         if arduino.obstacle_detected():
             arduino.set_speed(0, 0)
@@ -87,7 +62,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 arduino.reset_obstacle_detected()
                 arduino.turn_degrees(190)
                 print('obstacle line')
-                on_obstacle_line(int(address))
+                on_obstacle_line()
 
             #arduino.turn_degrees(180)
             #wait(0.5)

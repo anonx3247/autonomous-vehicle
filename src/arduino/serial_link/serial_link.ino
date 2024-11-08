@@ -37,7 +37,7 @@ bool isCustomTaskOn = false;              // lancement de la tache 1 de test d'a
 bool isMotorSpeedCalculationOn = true;               // lancement de la tache 2 de calcul de vitesse
 bool isProgressiveAccelerationOn = false;              // lancement de la tache 3 d'accélération progressive
 bool isCollisionDetectionOn = false;              // lancement de la tache 4 de détection de collision par IR
-bool isServoRotationOn = false;              // lancement de la tache 5 de rotation du servomoteur
+bool isServoRotationOn = true;              // lancement de la tache 5 de rotation du servomoteur
 bool obstacleDetected = false;                 // obstacleDetectedacle détecté
 
 char c, CharIn, m;
@@ -124,7 +124,7 @@ void init_arduino() {
   motorSpeedCalculationOn();
   isProgressiveAccelerationOn = false;
   isCollisionDetectionOn = true;
-  isServoRotationOn = false;
+  isServoRotationOn = true;
 }
 
 void setup() {
@@ -168,7 +168,7 @@ void loop() {
   if (isMotorSpeedCalculationOn) motorSpeedCalculation();  // tache de calcul de la vitesse moteur toujours en route
   if (isProgressiveAccelerationOn) progressiveAcceleration();  // tache d'accélération progressive des moteurs
   if (isCollisionDetectionOn) collisionDetection();  // tache de détection de collision
-  if (isServoRotationOn) servoRotation();  // tache de rotation du servomoteur
+  servoRotation();  // tache de rotation du servomoteur
 }
 
 
