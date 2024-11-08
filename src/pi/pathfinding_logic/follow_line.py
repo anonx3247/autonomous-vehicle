@@ -14,7 +14,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
     image = perception(feedback=False)
     addresses = []
     address = input("Next adress: ")
-    if type(address) == list:
+    if type(ast.literal_eval(address)) == list:
         address += address
     else :
         addresses.append(int(address))
