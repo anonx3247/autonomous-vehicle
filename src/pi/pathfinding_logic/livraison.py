@@ -46,8 +46,8 @@ def obstacle_line(address):
     
     
 
-def obstacle_int(arduino, addresses):
-    global pathfinder, address
+def obstacle_int(arduino, addresses, address):
+    global pathfinder
     pathfinder.enleve_arrete_en_face()
     pathfinder.pos = pathfinder.prev
     pathfinder.djikstra(pathfinder.pos, address)
