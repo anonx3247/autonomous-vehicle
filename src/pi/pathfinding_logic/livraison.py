@@ -18,6 +18,7 @@ def callback(arduino,addresses):
     print('rotation',   rotation)
     if type(rotation) == str:
         if rotation == 'arrived':
+            pathfinder.prev = pathfinder.pos
             pathfinder.pos = address
             if idx == len(addresses)-1:
                 return 'arrived'
