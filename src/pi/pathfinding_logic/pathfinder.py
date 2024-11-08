@@ -100,7 +100,9 @@ class Pathfinder(object):
         path = path[::-1]
         if distances[end] == np.inf:
             print('impossible')
-            exit()
+            self.restart_mat()
+            return self.djikstra(start, end)
+            #exit()
         self.path = iter(path[1:])
 
     def decision(self, objectif = -1):
