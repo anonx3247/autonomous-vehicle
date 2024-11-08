@@ -35,7 +35,7 @@ def callback(arduino,addresses):
     if c is None:
         print('enlevement d\'arrete')
         pathfinder.enleve_arrete_en_face()
-        callback(arduino,addresses)
+        return callback(arduino,addresses)
 
 def obstacle_line():
     global pathfinder, address

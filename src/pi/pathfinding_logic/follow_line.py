@@ -36,6 +36,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                 address += address
             else :
                 addresses.append(address)
+            on_intersection_callback(arduino, addresses) 
     while True:
         image = perception(feedback=False)
         if iters_since_no_line > 10:
@@ -65,6 +66,7 @@ def follow_line(use_default_parameters=True, expected_corners=4, on_intersection
                         address += address
                     else :
                         addresses.append(address)
+                    on_intersection_callback(arduino, addresses)
             if on_obstacle_intersection is not None and arduino.obstacle_detected():
                 print('obstacle int')
                 arduino.reset_obstacle_detected()
