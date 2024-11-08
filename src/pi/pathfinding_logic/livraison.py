@@ -53,7 +53,7 @@ def obstacle_int(arduino):
 
 def main():
     follow_line(
-        use_default_parameters=False,
+        use_default_parameters=True,
         width_threshold=0.3, 
         on_intersection_callback=callback, 
         on_obstacle_line=obstacle_line, 
