@@ -111,6 +111,7 @@ class Pathfinder(object):
         
         """
         if self.pos == objectif:
+            self.prev = self.pos
             return 'arrived'
         if objectif != self.obj:
             self.obj = objectif
